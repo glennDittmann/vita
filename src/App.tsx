@@ -9,6 +9,7 @@ import TitleBar from "./Titlebar/TitleBar";
 // CSS
 import "./reset.css";
 import "./styles.css";
+import { Dimension } from "./types";
 
 interface ToastItem {
   id: number;
@@ -19,6 +20,7 @@ export default function App() {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
   const [nextToastId, setNextToastId] = useState(0);
   const [vertexCount, setVertexCount] = useState(0);
+  const [mode, setMode] = useState<Dimension>(Dimension.ThreeD);
 
   const handleTriangulationComplete = (numTriangles: number) => {
     setToasts(prev => [...prev, { id: nextToastId, numTriangles }]);
@@ -29,6 +31,10 @@ export default function App() {
     setVertexCount(count);
   };
 
+  const handleDimensionChange = (newDim: Dimension) => {
+    setMode(newDim);
+  };
+
   return (
     <main>
       <TitleBar />
@@ -37,9 +43,11 @@ export default function App() {
           <Sidebar
             onTriangulationComplete={handleTriangulationComplete}
             onCreateVertices={handleCreateVertices}
+            onDimensionChange={handleDimensionChange}
+            dim={mode}
           />
           <div className="viewport">
-            <Experience vertexCount={vertexCount} />
+            <Experience vertexCount={vertexCount} mode={mode} />
           </div>
         </div>
         <Footer />
