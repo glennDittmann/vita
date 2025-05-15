@@ -1,0 +1,79 @@
+import { useState } from 'react';
+import { invoke } from "@tauri-apps/api/core";
+import SlButton from '@shoelace-style/shoelace/dist/react/button/index.js';
+import SlInput from '@shoelace-style/shoelace/dist/react/input/index.js';
+import SlRange from '@shoelace-style/shoelace/dist/react/range/index.js';
+import type SlInputElement from '@shoelace-style/shoelace/dist/components/input/input.js';
+import type SlRangeElement from '@shoelace-style/shoelace/dist/components/range/range.js';
+// BINDINGS
+import { TriangulationRequest } from '../../src-tauri/bindings/TriangulationRequest';
+import { TriangulationResult } from '../../src-tauri/bindings/TriangulationResult';
+import './Sidebar.css';
+
+interface SidebarProps {
+  onTriangulationComplete: (numTriangles: number) => void;
+  onCreateVertices?: (numVertices: number) => void;
+}
+
+export default function Sidebar({ onTriangulationComplete, onCreateVertices }: SidebarProps) {
+  const [numVertices, setNumVertices] = useState("3");
+  const [sliderValue, setSliderValue] = useState(100);
+
+  async function triangulate() {
+    const num_vertices = parseInt(numVertices, 10);
+    const triangulationResult = await invoke<TriangulationResult>("triangulate", {
+      request: { num_vertices } as TriangulationRequest
+    });
+
+    onTriangulationComplete(triangulationResult.num_triangles);
+  }
+
+  function handleCreateVertices() {
+    if (onCreateVertices) {
+      onCreateVertices(sliderValue);
+    }
+  }
+
+  return (
+    <div className="sidebar">
+      <div className="sidebar-section">
+        <h3>Triangulation</h3>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            triangulate();
+          }}
+        >
+          <SlInput
+            id="greet-input"
+            placeholder="Enter the number of vertices"
+            type="number"
+            value={numVertices}
+            onSlInput={(e) => setNumVertices((e.currentTarget as SlInputElement).value)}
+          />
+          <SlButton type="submit" variant="primary">Triangulate</SlButton>
+        </form>
+      </div>
+
+      <div className="sidebar-section">
+        <h3>Create Vertices</h3>
+        <div className="slider-container">
+          <SlRange
+            min={1}
+            max={1000}
+            value={sliderValue}
+            onSlChange={(e) => setSliderValue((e.currentTarget as SlRangeElement).value)}
+          />
+          <div className="slider-value">{sliderValue} vertices</div>
+        </div>
+        <SlButton
+          variant="primary"
+          onClick={handleCreateVertices}
+          disabled={!onCreateVertices}
+        >
+          Create Vertices
+        </SlButton>
+      </div>
+    </div>
+  )
+}
