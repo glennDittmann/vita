@@ -1,6 +1,6 @@
-import * as THREE from 'three'
-import { useRef, useState, useMemo } from 'react'
-import { Canvas, useFrame, ThreeElements } from '@react-three/fiber'
+import { useMemo } from 'react'
+import { Canvas } from '@react-three/fiber'
+import { OrbitControls } from '@react-three/drei'
 import './styles.css'
 
 function Vertices({ count }: { count: number }) {
@@ -41,6 +41,7 @@ export default function Experience({ vertexCount }: ExperienceProps) {
       <ambientLight intensity={Math.PI / 2} />
       <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
       <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
+      <OrbitControls />
       {vertexCount > 0 && <Vertices count={vertexCount} />}
     </Canvas>
   );
