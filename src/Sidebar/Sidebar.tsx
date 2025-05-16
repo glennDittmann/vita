@@ -47,6 +47,8 @@ export default function Sidebar({ onTriangulationComplete, onCreateVertices, onD
     }
   }
 
+  const minNumVertices = dim === Dimension.TwoD ? 3 : 4;
+  const maxNumVertices = dim === Dimension.TwoD ? 1000 : 100;
   return (
     <div className="sidebar">
       <div className="sidebar-section">
@@ -79,8 +81,8 @@ export default function Sidebar({ onTriangulationComplete, onCreateVertices, onD
         <h3>Create Vertices</h3>
         <div className="slider-container">
           <SlRange
-            min={1}
-            max={1000}
+            min={minNumVertices}
+            max={maxNumVertices}
             value={sliderValue}
             onSlChange={(e) => setSliderValue((e.currentTarget as SlRangeElement).value)}
           />
