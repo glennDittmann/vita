@@ -21,6 +21,8 @@ export default function App() {
   const [nextToastId, setNextToastId] = useState(0);
   const [vertexCount, setVertexCount] = useState(0);
   const [mode, setMode] = useState<Dimension>(Dimension.ThreeD);
+  const [showGrid, setShowGrid] = useState(true);
+  const [showAxis, setShowAxis] = useState(true);
 
   const handleTriangulationComplete = (numTriangles: number) => {
     setToasts(prev => [...prev, { id: nextToastId, numTriangles }]);
@@ -35,6 +37,14 @@ export default function App() {
     setMode(newDim);
   };
 
+  const handleGridChange = (show: boolean) => {
+    setShowGrid(show);
+  };
+
+  const handleAxisChange = (show: boolean) => {
+    setShowAxis(show);
+  };
+
   return (
     <main>
       <TitleBar />
@@ -47,10 +57,18 @@ export default function App() {
             dim={mode}
           />
           <div className="viewport">
-            <Experience vertexCount={vertexCount} mode={mode} />
+            <Experience
+              vertexCount={vertexCount}
+              mode={mode}
+              showGrid={showGrid}
+              showAxis={showAxis}
+            />
           </div>
         </div>
-        <Footer />
+        <Footer
+          onGridChange={handleGridChange}
+          onAxisChange={handleAxisChange}
+        />
       </div>
 
       {toasts.map(toast => (

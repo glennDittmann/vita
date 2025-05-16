@@ -2,8 +2,21 @@
   color: var(--white);
   background: rgba(255, 255, 255, 0.05);
   text-align: center;
-  padding: 13px 0;
+  padding: 8px 16px;
   margin: 8px;
   border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-controls {
+  display: flex;
+  gap: 16px;
+}
+
+.control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--white);
+  font-size: 0.9em;
 }
