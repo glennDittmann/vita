@@ -1,11 +1,9 @@
 import { useState } from 'react';
 import { invoke } from "@tauri-apps/api/core";
 import SlButton from '@shoelace-style/shoelace/dist/react/button/index.js';
-import SlInput from '@shoelace-style/shoelace/dist/react/input/index.js';
 import SlRange from '@shoelace-style/shoelace/dist/react/range/index.js';
 import SlSelect from '@shoelace-style/shoelace/dist/react/select/index.js';
 import SlOption from '@shoelace-style/shoelace/dist/react/option/index.js';
-import type SlInputElement from '@shoelace-style/shoelace/dist/components/input/input.js';
 import type SlRangeElement from '@shoelace-style/shoelace/dist/components/range/range.js';
 import type SlSelectElement from '@shoelace-style/shoelace/dist/components/select/select.js';
 // BINDINGS
@@ -22,13 +20,11 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ onTriangulationComplete, onCreateVertices, onDimensionChange, dim }: SidebarProps) {
-  const [numVertices, setNumVertices] = useState("3");
-  const [sliderValue, setSliderValue] = useState(100);
+  const [numVertices, setNumVertices] = useState(3);
 
   async function triangulate() {
-    const num_vertices = parseInt(numVertices, 10);
     const triangulationResult = await invoke<TriangulationResult>("triangulate", {
-      request: { num_vertices } as TriangulationRequest
+      request: { num_vertices: numVertices } as TriangulationRequest
     });
 
     onTriangulationComplete(triangulationResult.num_triangles);
@@ -36,7 +32,7 @@ export default function Sidebar({ onTriangulationComplete, onCreateVertices, onD
 
   function handleCreateVertices() {
     if (onCreateVertices) {
-      onCreateVertices(sliderValue);
+      onCreateVertices(numVertices);
     }
   }
 
@@ -59,34 +55,15 @@ export default function Sidebar({ onTriangulationComplete, onCreateVertices, onD
         </SlSelect>
       </div>
       <div className="sidebar-section">
-        <h3>Triangulation</h3>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            triangulate();
-          }}
-        >
-          <SlInput
-            id="greet-input"
-            placeholder="Enter the number of vertices"
-            type="number"
-            value={numVertices}
-            onSlInput={(e) => setNumVertices((e.currentTarget as SlInputElement).value)}
-          />
-          <SlButton type="submit" variant="primary">Triangulate</SlButton>
-        </form>
-      </div>
-
-      <div className="sidebar-section">
         <h3>Create Vertices</h3>
         <div className="slider-container">
           <SlRange
             min={minNumVertices}
             max={maxNumVertices}
-            value={sliderValue}
-            onSlChange={(e) => setSliderValue((e.currentTarget as SlRangeElement).value)}
+            value={numVertices}
+            onSlChange={(e) => setNumVertices((e.currentTarget as SlRangeElement).value)}
           />
-          <div className="slider-value">{sliderValue} vertices</div>
+          <div className="slider-value">{numVertices} vertices</div>
         </div>
         <SlButton
           variant="primary"
@@ -95,6 +72,10 @@ export default function Sidebar({ onTriangulationComplete, onCreateVertices, onD
         >
           Create Vertices
         </SlButton>
+      </div>
+      <div className="sidebar-section">
+        <h3>Triangulation</h3>
+        <SlButton variant="primary" onClick={triangulate}>Triangulate</SlButton>
       </div>
     </div>
   )
