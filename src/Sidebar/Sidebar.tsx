@@ -4,10 +4,10 @@ import { invoke } from "@tauri-apps/api/core";
 import { info } from '@tauri-apps/plugin-log';
 import SlButton from '@shoelace-style/shoelace/dist/react/button/index.js';
 import SlRange from '@shoelace-style/shoelace/dist/react/range/index.js';
-import SlSelect from '@shoelace-style/shoelace/dist/react/select/index.js';
-import SlOption from '@shoelace-style/shoelace/dist/react/option/index.js';
+import SlRadioButton from '@shoelace-style/shoelace/dist/react/radio-button/index.js';
+import SlRadioGroup from '@shoelace-style/shoelace/dist/react/radio-group/index.js';
 import type SlRangeElement from '@shoelace-style/shoelace/dist/components/range/range.js';
-import type SlSelectElement from '@shoelace-style/shoelace/dist/components/select/select.js';
+import type SlRadioGroupElement from '@shoelace-style/shoelace/dist/components/radio-group/radio-group.js';
 // BINDINGS
 import { TriangulationRequest } from '../../src-tauri/bindings/TriangulationRequest';
 import { TriangulationResult } from '../../src-tauri/bindings/TriangulationResult';
@@ -40,7 +40,7 @@ export default function Sidebar({ onTriangulationComplete, onCreateVertices }: S
   }
 
   function handleDimensionChange(e: Event) {
-    const newMode = (e.currentTarget as SlSelectElement).value as Dimension;
+    const newMode = (e.currentTarget as SlRadioGroupElement).value as Dimension;
     if (newMode === "TWO") {
       dispatch({ type: 'dimension/set', payload: "TWO" });
     } else if (newMode === "THREE") {
@@ -53,11 +53,10 @@ export default function Sidebar({ onTriangulationComplete, onCreateVertices }: S
   return (
     <div className="sidebar">
       <div className="sidebar-section">
-        <h3>Dimension</h3>
-        <SlSelect value={dimension} onSlChange={handleDimensionChange}>
-          <SlOption value={"TWO"}>2D</SlOption>
-          <SlOption value={"THREE"}>3D</SlOption>
-        </SlSelect>
+        <SlRadioGroup size="small" label="Dimension" name="dimension" value={dimension} onSlChange={handleDimensionChange}>
+          <SlRadioButton value="TWO">2D</SlRadioButton>
+          <SlRadioButton value="THREE">3D</SlRadioButton>
+        </SlRadioGroup>
       </div>
       <div className="sidebar-section">
         <h3>Create Vertices</h3>
