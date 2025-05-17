@@ -660,7 +660,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "117725a109d387c937a1533ce01b450cbde6b88abceea8473c4d7a85853cda3c"
 dependencies = [
  "lazy_static",
- "windows-sys 0.48.0",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
@@ -3309,16 +3309,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "rand_distr"
-version = "0.5.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6a8615d50dcf34fa31f7ab52692afec947c4dd0ab803cc87cb3b0b4570ff7463"
-dependencies = [
- "num-traits",
- "rand 0.9.1",
-]
-
-[[package]]
 name = "rand_hc"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3466,16 +3456,13 @@ dependencies = [
 
 [[package]]
 name = "rita"
-version = "0.1.7"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fd362db48b12a61811c00584f1e757deb19ce4953c0931ae1edc393a77669a64"
+checksum = "7c6af08ecdba040220a7838aa51eabad19419d81c6bdd1c9f37f54ac1f31cc54"
 dependencies = [
  "anyhow",
  "geogram_predicates",
- "log",
  "nalgebra",
- "rand 0.9.1",
- "rand_distr",
  "rayon",
 ]
 
