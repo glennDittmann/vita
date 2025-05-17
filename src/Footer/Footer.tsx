@@ -4,8 +4,8 @@ import './Footer.css';
 
 export default function Footer() {
   const dispatch = useDispatch();
-  const axisActive = useSelector((state: any) => state.axisActive)
-  const gridActive = useSelector((state: any) => state.gridActive)
+  const axisActive = useSelector((state: any) => state.experienceSettings.axisActive)
+  const gridActive = useSelector((state: any) => state.experienceSettings.gridActive)
 
   const handleGridChange = () => {
     if (gridActive) {

@@ -20,7 +20,7 @@ interface SidebarProps {
 
 export default function Sidebar({ onTriangulationComplete, onCreateVertices }: SidebarProps) {
   const dispatch = useDispatch();
-  const dimension = useSelector((state: any) => state.dimension) as Dimension;
+  const dimension = useSelector((state: any) => state.vertexSettings.dimension) as Dimension;
   const [numVertices, setNumVertices] = useState(3);
 
   async function triangulate() {

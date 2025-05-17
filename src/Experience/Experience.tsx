@@ -7,7 +7,7 @@ import './styles.css'
 import { Dimension } from '../../src-tauri/bindings/Dimension'
 
 function Vertices({ count }: { count: number; }) {
-  const dimension = useSelector((state: any) => state.dimension) as Dimension;
+  const dimension = useSelector((state: any) => state.vertexSettings.dimension) as Dimension;
 
   const points = useMemo(() => {
     const points = new Float32Array(count * 3)
@@ -41,8 +41,8 @@ interface ExperienceProps {
 }
 
 export default function Experience({ vertexCount }: ExperienceProps) {
-  const gridActive = useSelector((state: any) => state.gridActive)
-  const axisActive = useSelector((state: any) => state.axisActive)
+  const gridActive = useSelector((state: any) => state.experienceSettings.gridActive)
+  const axisActive = useSelector((state: any) => state.experienceSettings.axisActive)
 
   return (
     <Canvas className='container'>
