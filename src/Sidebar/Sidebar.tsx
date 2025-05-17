@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { invoke } from "@tauri-apps/api/core";
 import SlButton from '@shoelace-style/shoelace/dist/react/button/index.js';
 import SlRange from '@shoelace-style/shoelace/dist/react/range/index.js';
@@ -10,16 +11,16 @@ import type SlSelectElement from '@shoelace-style/shoelace/dist/components/selec
 import { TriangulationRequest } from '../../src-tauri/bindings/TriangulationRequest';
 import { TriangulationResult } from '../../src-tauri/bindings/TriangulationResult';
 import './Sidebar.css';
-import { Dimension } from '../types';
+import { Dimension } from '../../src-tauri/bindings/Dimension';
 
 interface SidebarProps {
   onTriangulationComplete: (numTriangles: number) => void;
   onCreateVertices?: (numVertices: number) => void;
-  onDimensionChange?: (dim: Dimension) => void;
-  dim: Dimension;
 }
 
-export default function Sidebar({ onTriangulationComplete, onCreateVertices, onDimensionChange, dim }: SidebarProps) {
+export default function Sidebar({ onTriangulationComplete, onCreateVertices }: SidebarProps) {
+  const dispatch = useDispatch();
+  const dimension = useSelector((state: any) => state.dimension) as Dimension;
   const [numVertices, setNumVertices] = useState(3);
 
   async function triangulate() {
@@ -38,20 +39,22 @@ export default function Sidebar({ onTriangulationComplete, onCreateVertices, onD
 
   function handleDimensionChange(e: Event) {
     const newMode = (e.currentTarget as SlSelectElement).value as Dimension;
-    if (onDimensionChange) {
-      onDimensionChange(newMode);
+    if (newMode === "TWO") {
+      dispatch({ type: 'dimension/set', payload: "TWO" });
+    } else if (newMode === "THREE") {
+      dispatch({ type: 'dimension/set', payload: "THREE" })
     }
   }
 
-  const minNumVertices = dim === Dimension.TwoD ? 3 : 4;
-  const maxNumVertices = dim === Dimension.TwoD ? 1000 : 100;
+  const minNumVertices = dimension === "TWO" ? 3 : 4;
+  const maxNumVertices = dimension === "THREE" ? 1000 : 100;
   return (
     <div className="sidebar">
       <div className="sidebar-section">
         <h3>Dimension</h3>
-        <SlSelect value={dim} onSlChange={handleDimensionChange}>
-          <SlOption value={Dimension.TwoD}>2D</SlOption>
-          <SlOption value={Dimension.ThreeD}>3D</SlOption>
+        <SlSelect value={dimension} onSlChange={handleDimensionChange}>
+          <SlOption value={"TWO"}>2D</SlOption>
+          <SlOption value={"THREE"}>3D</SlOption>
         </SlSelect>
       </div>
       <div className="sidebar-section">

@@ -12,3 +12,11 @@ pub struct TriangulationResult {
 pub struct TriangulationRequest {
     pub num_vertices: usize,
 }
+
+#[derive(Debug, Serialize, Deserialize, TS)]
+#[serde(rename_all = "UPPERCASE")]
+#[ts(export)]
+pub enum Dimension {
+    Two,
+    Three,
+}

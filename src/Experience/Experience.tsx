@@ -4,19 +4,21 @@ import { Canvas } from '@react-three/fiber'
 import { OrbitControls, Grid } from '@react-three/drei'
 import { AxesHelper } from 'three'
 import './styles.css'
-import { Dimension } from '../types'
+import { Dimension } from '../../src-tauri/bindings/Dimension'
 
-function Vertices({ count, mode }: { count: number; mode: Dimension }) {
+function Vertices({ count }: { count: number; }) {
+  const dimension = useSelector((state: any) => state.dimension) as Dimension;
+
   const points = useMemo(() => {
     const points = new Float32Array(count * 3)
     for (let i = 0; i < count; i++) {
       const i3 = i * 3
       points[i3] = (Math.random() - 0.5) * 10
-      points[i3 + 1] = mode === Dimension.TwoD ? 0 : (Math.random() - 0.5) * 10
+      points[i3 + 1] = dimension === "TWO" ? 0 : (Math.random() - 0.5) * 10
       points[i3 + 2] = (Math.random() - 0.5) * 10
     }
     return points
-  }, [count, mode])
+  }, [count, dimension])
 
   return (
     <points>
@@ -36,10 +38,9 @@ function Vertices({ count, mode }: { count: number; mode: Dimension }) {
 
 interface ExperienceProps {
   vertexCount: number;
-  mode: Dimension;
 }
 
-export default function Experience({ vertexCount, mode }: ExperienceProps) {
+export default function Experience({ vertexCount }: ExperienceProps) {
   const gridActive = useSelector((state: any) => state.gridActive)
   const axisActive = useSelector((state: any) => state.axisActive)
 
@@ -51,7 +52,7 @@ export default function Experience({ vertexCount, mode }: ExperienceProps) {
       <OrbitControls />
       {gridActive && <Grid infiniteGrid />}
       {axisActive && <primitive object={new AxesHelper(5)} />}
-      {vertexCount > 0 && <Vertices count={vertexCount} mode={mode} />}
+      {vertexCount > 0 && <Vertices count={vertexCount} />}
     </Canvas>
   );
 }

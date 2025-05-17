@@ -39,3 +39,10 @@ npm run build
 - `src/` - Main source code
 - `src-tauri/` - Tauri-specific code
 - `public/` - Static assets
+
+## Types
+To ensure type safety between `rust` and `typescript` `ts_rs` is used.
+
+The types that need to be shared between frontend and backend are defined in `src-tauri/src/types.rs`.
+
+Run `cargo test export_bindings`, to generate the `typescript` counterparts to `src-tauri/bindings/`.

@@ -1,10 +1,18 @@
+import { Dimension } from '../../src-tauri/bindings/Dimension'
+
 const initialState = {
   axisActive: true,
   gridActive: true,
+  dimension: "THREE" as Dimension,
 }
 
 const reducer = (state: any = initialState, action: any) => {
   switch (action.type) {
+    case 'dimension/set':
+      return {
+        ...state,
+        dimension: action.payload,
+      }
     case 'axis/activate':
       return {
         ...state,
