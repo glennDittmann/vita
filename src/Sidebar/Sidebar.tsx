@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { invoke } from "@tauri-apps/api/core";
+import { info } from '@tauri-apps/plugin-log';
 import SlButton from '@shoelace-style/shoelace/dist/react/button/index.js';
 import SlRange from '@shoelace-style/shoelace/dist/react/range/index.js';
 import SlSelect from '@shoelace-style/shoelace/dist/react/select/index.js';
@@ -24,6 +25,7 @@ export default function Sidebar({ onTriangulationComplete, onCreateVertices }: S
   const [numVertices, setNumVertices] = useState(3);
 
   async function triangulate() {
+    info(`Triangulating ${numVertices} vertices....`);
     const triangulationResult = await invoke<TriangulationResult>("triangulate", {
       request: { num_vertices: numVertices } as TriangulationRequest
     });

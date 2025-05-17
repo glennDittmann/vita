@@ -7,6 +7,7 @@
     "npm:@shoelace-style/shoelace@^2.20.1": "2.20.1_@types+react@19.1.2",
     "npm:@tauri-apps/api@2": "2.5.0",
     "npm:@tauri-apps/cli@2": "2.5.0",
+    "npm:@tauri-apps/plugin-log@2.4": "2.4.0",
     "npm:@tauri-apps/plugin-opener@2": "2.2.6",
     "npm:@types/react-dom@^19.1.0": "19.1.3_@types+react@19.1.2",
     "npm:@types/react@^19.1.0": "19.1.2",
@@ -633,6 +634,12 @@
         "@tauri-apps/cli-win32-x64-msvc"
       ],
       "bin": true
+    },
+    "@tauri-apps/plugin-log@2.4.0": {
+      "integrity": "sha512-j7yrDtLNmayCBOO2esl3aZv9jSXy2an8MDLry3Ys9ZXerwUg35n1Y2uD8HoCR+8Ng/EUgx215+qOUfJasjYrHw==",
+      "dependencies": [
+        "@tauri-apps/api"
+      ]
     },
     "@tauri-apps/plugin-opener@2.2.6": {
       "integrity": "sha512-bSdkuP71ZQRepPOn8BOEdBKYJQvl6+jb160QtJX/i2H9BF6ZySY/kYljh76N2Ne5fJMQRge7rlKoStYQY5Jq1w==",
@@ -1297,6 +1304,7 @@
         "npm:@shoelace-style/shoelace@^2.20.1",
         "npm:@tauri-apps/api@2",
         "npm:@tauri-apps/cli@2",
+        "npm:@tauri-apps/plugin-log@2.4",
         "npm:@tauri-apps/plugin-opener@2",
         "npm:@types/react-dom@^19.1.0",
         "npm:@types/react@^19.1.0",

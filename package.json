@@ -12,6 +12,7 @@
   "dependencies": {
     "@react-three/drei": "^10.0.7",
     "@reduxjs/toolkit": "^2.8.2",
+    "@tauri-apps/plugin-log": "~2.4.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "@react-three/fiber": "^9.1.2",

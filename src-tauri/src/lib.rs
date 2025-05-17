@@ -17,7 +17,14 @@ fn triangulate(request: TriangulationRequest) -> TriangulationResult {
         vertices.push([x, y]);
     }
 
-    let _res = t.insert_vertices(&vertices, None, true);
+    let res = t.insert_vertices(&vertices, None, true);
+
+    if res.is_err() {
+        log::error!("Failed to insert vertices: {:?}", res.err());
+        return TriangulationResult { num_triangles: 0 };
+    }
+
+    log::info!("Triangulation complete");
 
     TriangulationResult {
         num_triangles: t.num_tris(),
@@ -27,6 +34,7 @@ fn triangulate(request: TriangulationRequest) -> TriangulationResult {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_log::Builder::new().build())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![triangulate])
         .run(tauri::generate_context!())
