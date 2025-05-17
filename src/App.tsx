@@ -47,6 +47,7 @@ export default function App() {
         <Footer />
       </div>
 
+      {/* FIXME: there is a console error, when sl alerts disappear from view (NotFoundError: The object can not be found here, fn removeChild) */}
       {toasts.map(toast => (
         <Alert
           key={toast.id}

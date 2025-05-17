@@ -1,6 +1,7 @@
 use rand::Rng;
 use rita::Triangulation;
 
+mod logging;
 mod types;
 use types::{TriangulationRequest, TriangulationResult};
 
@@ -34,7 +35,7 @@ fn triangulate(request: TriangulationRequest) -> TriangulationResult {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
-        .plugin(tauri_plugin_log::Builder::new().build())
+        .plugin(logging::build_logger())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![triangulate])
         .run(tauri::generate_context!())
