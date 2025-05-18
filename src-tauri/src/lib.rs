@@ -1,34 +1,31 @@
-use rand::Rng;
 use rita::Triangulation;
 
 mod logging;
 mod types;
-use types::{TriangulationRequest, TriangulationResult};
+use types::{Triangle3, TriangulationRequest, TriangulationResult, Vertex3};
 
 #[tauri::command]
 fn triangulate(request: TriangulationRequest) -> TriangulationResult {
     let mut t = Triangulation::new(None);
-    let mut rng = rand::rng();
 
-    let mut vertices = Vec::with_capacity(request.num_vertices);
-
-    for _ in 0..request.num_vertices {
-        let x = rng.random_range(0.0..1.0);
-        let y = rng.random_range(0.0..1.0);
-        vertices.push([x, y]);
-    }
+    let vertices = request
+        .vertices
+        .into_iter()
+        .map(|v| v.into())
+        .collect::<Vec<[f64; 2]>>();
 
     let res = t.insert_vertices(&vertices, None, true);
 
     if res.is_err() {
         log::error!("Failed to insert vertices: {:?}", res.err());
-        return TriangulationResult { num_triangles: 0 };
+        return TriangulationResult::empty();
     }
 
     log::info!("Triangulation complete");
 
     TriangulationResult {
-        num_triangles: t.num_tris(),
+        triangles: t.tris().iter().map(|&t| Triangle3::from(t)).collect(),
+        vertices: t.vertices().iter().map(|&v| Vertex3::from(v)).collect(),
     }
 }
 

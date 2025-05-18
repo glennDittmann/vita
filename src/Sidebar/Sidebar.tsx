@@ -13,31 +13,35 @@ import { TriangulationRequest } from '../../src-tauri/bindings/TriangulationRequ
 import { TriangulationResult } from '../../src-tauri/bindings/TriangulationResult';
 import './Sidebar.css';
 import { Dimension } from '../../src-tauri/bindings/Dimension';
+import { Vertex3 } from '../../src-tauri/bindings/Vertex3';
 
 interface SidebarProps {
   onTriangulationComplete: (numTriangles: number) => void;
-  onCreateVertices?: (numVertices: number) => void;
 }
 
-export default function Sidebar({ onTriangulationComplete, onCreateVertices }: SidebarProps) {
+export default function Sidebar({ onTriangulationComplete }: SidebarProps) {
   const dispatch = useDispatch();
-  const dimension = useSelector((state: any) => state.vertexSettings.dimension) as Dimension;
+  const dimension = useSelector((state: any) => state.vertexSettings.dimension);
+  const vertices = useSelector((state: any) => state.vertexSettings.vertices);
   const [numVertices, setNumVertices] = useState(3);
 
   async function triangulate() {
     info(`Triangulating ${numVertices} vertices....`);
     const triangulationResult = await invoke<TriangulationResult>("triangulate", {
-      request: { num_vertices: numVertices } as TriangulationRequest
+      request: { vertices } as TriangulationRequest
     });
 
-    onTriangulationComplete(triangulationResult.num_triangles);
+    onTriangulationComplete(triangulationResult.triangles.length);
   }
 
-  function handleCreateVertices() {
-    if (onCreateVertices) {
-      onCreateVertices(numVertices);
-    }
-  }
+  const handleCreateVertices = () => {
+    let vertices: Vertex3[] = new Array(numVertices).fill(0).map(() => ({
+      x: (Math.random() - 0.5) * 10,
+      y: dimension == "TWO" ? 0 : (Math.random() - 0.5) * 10,
+      z: (Math.random() - 0.5) * 10,
+    }));
+    dispatch({ type: 'vertices/set', payload: vertices });
+  };
 
   function handleDimensionChange(e: Event) {
     const newMode = (e.currentTarget as SlRadioGroupElement).value as Dimension;
@@ -72,14 +76,13 @@ export default function Sidebar({ onTriangulationComplete, onCreateVertices }: S
         <SlButton
           variant="primary"
           onClick={handleCreateVertices}
-          disabled={!onCreateVertices}
         >
           Create Vertices
         </SlButton>
       </div>
       <div className="sidebar-section">
         <h3>Triangulation</h3>
-        <SlButton variant="primary" onClick={triangulate}>Triangulate</SlButton>
+        <SlButton variant="primary" onClick={triangulate} disabled={vertices.length < 3}>Triangulate</SlButton>
       </div>
     </div>
   )

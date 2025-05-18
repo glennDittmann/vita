@@ -18,15 +18,10 @@ interface ToastItem {
 export default function App() {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
   const [nextToastId, setNextToastId] = useState(0);
-  const [vertexCount, setVertexCount] = useState(0);
 
   const handleTriangulationComplete = (numTriangles: number) => {
     setToasts(prev => [...prev, { id: nextToastId, numTriangles }]);
     setNextToastId(prev => prev + 1);
-  };
-
-  const handleCreateVertices = (count: number) => {
-    setVertexCount(count);
   };
 
   return (
@@ -36,12 +31,9 @@ export default function App() {
         <div className="content">
           <Sidebar
             onTriangulationComplete={handleTriangulationComplete}
-            onCreateVertices={handleCreateVertices}
           />
           <div className="viewport">
-            <Experience
-              vertexCount={vertexCount}
-            />
+            <Experience />
           </div>
         </div>
         <Footer />

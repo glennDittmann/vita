@@ -6,26 +6,27 @@ import { AxesHelper } from 'three'
 import './styles.css'
 import { Dimension } from '../../src-tauri/bindings/Dimension'
 
-function Vertices({ count }: { count: number; }) {
+function Vertices() {
   const dimension = useSelector((state: any) => state.vertexSettings.dimension) as Dimension;
+  const vertices = useSelector((state: any) => state.vertexSettings.vertices);
 
   const points = useMemo(() => {
-    const points = new Float32Array(count * 3)
-    for (let i = 0; i < count; i++) {
+    const points = new Float32Array(vertices.length * 3)
+    for (let i = 0; i < vertices.length; i++) {
       const i3 = i * 3
-      points[i3] = (Math.random() - 0.5) * 10
-      points[i3 + 1] = dimension === "TWO" ? 0 : (Math.random() - 0.5) * 10
-      points[i3 + 2] = (Math.random() - 0.5) * 10
+      points[i3] = vertices[i].x
+      points[i3 + 1] = vertices[i].y
+      points[i3 + 2] = vertices[i].z
     }
     return points
-  }, [count, dimension])
+  }, [vertices, dimension])
 
   return (
     <points>
       <bufferGeometry>
         <bufferAttribute
           attach="attributes-position"
-          count={count}
+          count={vertices.length}
           array={points}
           itemSize={3}
           args={[points, 3]}
@@ -36,11 +37,8 @@ function Vertices({ count }: { count: number; }) {
   )
 }
 
-interface ExperienceProps {
-  vertexCount: number;
-}
-
-export default function Experience({ vertexCount }: ExperienceProps) {
+export default function Experience() {
+  const vertices = useSelector((state: any) => state.vertexSettings.vertices);
   const gridActive = useSelector((state: any) => state.experienceSettings.gridActive)
   const axisActive = useSelector((state: any) => state.experienceSettings.axisActive)
 
@@ -52,7 +50,7 @@ export default function Experience({ vertexCount }: ExperienceProps) {
       <OrbitControls />
       {gridActive && <Grid infiniteGrid />}
       {axisActive && <primitive object={new AxesHelper(5)} />}
-      {vertexCount > 0 && <Vertices count={vertexCount} />}
+      {vertices.length > 0 && <Vertices />}
     </Canvas>
   );
 }
