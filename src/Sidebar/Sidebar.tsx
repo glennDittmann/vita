@@ -31,6 +31,8 @@ export default function Sidebar({ onTriangulationComplete }: SidebarProps) {
       request: { vertices } as TriangulationRequest
     });
 
+    dispatch({ type: 'triangles/set', paylod: triangulationResult.triangles })
+
     onTriangulationComplete(triangulationResult.triangles.length);
   }
 
