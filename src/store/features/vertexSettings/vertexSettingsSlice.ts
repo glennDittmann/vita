@@ -3,7 +3,7 @@ import { Vertex3 } from "../../../../src-tauri/bindings/Vertex3";
 import { Triangle3 } from "../../../../src-tauri/bindings/Triangle3";
 
 const initialState = {
-  dimension: "THREE" as Dimension,
+  dimension: "TWO" as Dimension,
   triangles: [] as Triangle3[],
   vertices: [] as Vertex3[],
 }

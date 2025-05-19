@@ -23,9 +23,21 @@ fn triangulate(request: TriangulationRequest) -> TriangulationResult {
 
     log::info!("Triangulation complete");
 
+    let triangles = t
+        .tris()
+        .iter()
+        .map(|&t| Triangle3::from(t))
+        .collect::<Vec<Triangle3>>();
+
+    let vertices = t
+        .vertices()
+        .iter()
+        .map(|&v| Vertex3::from(v))
+        .collect::<Vec<Vertex3>>();
+
     TriangulationResult {
-        triangles: t.tris().iter().map(|&t| Triangle3::from(t)).collect(),
-        vertices: t.vertices().iter().map(|&v| Vertex3::from(v)).collect(),
+        triangles,
+        vertices,
     }
 }
 

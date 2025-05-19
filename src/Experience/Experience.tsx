@@ -5,6 +5,8 @@ import { OrbitControls, Grid } from '@react-three/drei'
 import { AxesHelper } from 'three'
 import './styles.css'
 import { Dimension } from '../../src-tauri/bindings/Dimension'
+import Triangle from './Triangle'
+import { Triangle3 } from '../../src-tauri/bindings/Triangle3'
 
 function Vertices() {
   const dimension = useSelector((state: any) => state.vertexSettings.dimension) as Dimension;
@@ -39,6 +41,7 @@ function Vertices() {
 
 export default function Experience() {
   const vertices = useSelector((state: any) => state.vertexSettings.vertices);
+  const triangles = useSelector((state: any) => state.vertexSettings.triangles);
   const gridActive = useSelector((state: any) => state.experienceSettings.gridActive)
   const axisActive = useSelector((state: any) => state.experienceSettings.axisActive)
 
@@ -48,9 +51,10 @@ export default function Experience() {
       <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
       <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
       <OrbitControls />
-      {gridActive && <Grid infiniteGrid />}
+      {gridActive && <Grid infiniteGrid position={[0, -0.001, 0]} />}
       {axisActive && <primitive object={new AxesHelper(5)} />}
       {vertices.length > 0 && <Vertices />}
+      {triangles.length > 0 && triangles.map((triangle: Triangle3, index: number) => <Triangle key={index} triangle={triangle} />)}
     </Canvas>
   );
 }

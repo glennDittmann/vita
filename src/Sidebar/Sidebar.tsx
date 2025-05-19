@@ -27,11 +27,12 @@ export default function Sidebar({ onTriangulationComplete }: SidebarProps) {
 
   async function triangulate() {
     info(`Triangulating ${numVertices} vertices....`);
+
     const triangulationResult = await invoke<TriangulationResult>("triangulate", {
       request: { vertices } as TriangulationRequest
     });
 
-    dispatch({ type: 'triangles/set', paylod: triangulationResult.triangles })
+    dispatch({ type: 'triangles/set', payload: triangulationResult.triangles })
 
     onTriangulationComplete(triangulationResult.triangles.length);
   }
@@ -43,6 +44,7 @@ export default function Sidebar({ onTriangulationComplete }: SidebarProps) {
       z: (Math.random() - 0.5) * 10,
     }));
     dispatch({ type: 'vertices/set', payload: vertices });
+    dispatch({ type: 'triangles/set', payload: [] });
   };
 
   function handleDimensionChange(e: Event) {
