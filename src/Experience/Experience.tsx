@@ -46,7 +46,15 @@ export default function Experience() {
   const axisActive = useSelector((state: any) => state.experienceSettings.axisActive)
 
   return (
-    <Canvas className='container'>
+    <Canvas
+      className='container'
+      camera={{
+        position: [5, 5, 5],
+        fov: 75,
+        near: 0.1,
+        far: 1000
+      }}
+    >
       <ambientLight intensity={Math.PI / 2} />
       <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
       <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
