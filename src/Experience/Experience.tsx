@@ -7,6 +7,8 @@ import './styles.css'
 import { Dimension } from '../../src-tauri/bindings/Dimension'
 import Triangle from './Triangle'
 import { Triangle3 } from '../../src-tauri/bindings/Triangle3'
+import { useControls } from 'leva'
+import { Perf } from 'r3f-perf'
 
 function Vertices() {
   const dimension = useSelector((state: any) => state.vertexSettings.dimension) as Dimension;
@@ -40,6 +42,10 @@ function Vertices() {
 }
 
 export default function Experience() {
+  const { showPerf } = useControls('perf', {
+    showPerf: false
+  });
+
   const vertices = useSelector((state: any) => state.vertexSettings.vertices);
   const triangles = useSelector((state: any) => state.vertexSettings.triangles);
   const gridActive = useSelector((state: any) => state.experienceSettings.gridActive)
@@ -55,6 +61,7 @@ export default function Experience() {
         far: 1000
       }}
     >
+      {showPerf && <Perf position="top-left" />}
       <ambientLight intensity={Math.PI / 2} />
       <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
       <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
