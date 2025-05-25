@@ -11,6 +11,7 @@ import type SlRadioGroupElement from '@shoelace-style/shoelace/dist/components/r
 // BINDINGS
 import { TriangulationRequest } from '../../src-tauri/bindings/TriangulationRequest';
 import { TriangulationResult } from '../../src-tauri/bindings/TriangulationResult';
+import { TetrahedralizationResult } from '../../src-tauri/bindings/TetrahedralizationResult';
 import './Sidebar.css';
 import { Dimension } from '../../src-tauri/bindings/Dimension';
 import { Vertex3 } from '../../src-tauri/bindings/Vertex3';
@@ -23,7 +24,7 @@ export default function Sidebar({ onTriangulationComplete }: SidebarProps) {
   const dispatch = useDispatch();
   const dimension = useSelector((state: any) => state.vertexSettings.dimension);
   const vertices = useSelector((state: any) => state.vertexSettings.vertices);
-  const [numVertices, setNumVertices] = useState(3);
+  const [numVertices, setNumVertices] = useState(4);
 
   async function triangulate() {
     info(`Triangulating ${numVertices} vertices....`);
@@ -37,6 +38,18 @@ export default function Sidebar({ onTriangulationComplete }: SidebarProps) {
     onTriangulationComplete(triangulationResult.triangles.length);
   }
 
+  async function tetrahedralize() {
+    info(`Tetrahedralizing ${numVertices} vertices....`);
+
+    const tetrahedralizationResult = await invoke<TetrahedralizationResult>("tetrahedralize", {
+      request: { vertices } as TriangulationRequest
+    });
+
+    dispatch({ type: 'tetrahedra/set', payload: tetrahedralizationResult.tetrahedra })
+
+    onTriangulationComplete(tetrahedralizationResult.tetrahedra.length);
+  }
+
   const handleCreateVertices = () => {
     let vertices: Vertex3[] = new Array(numVertices).fill(0).map(() => ({
       x: (Math.random() - 0.5) * 10,
@@ -45,6 +58,7 @@ export default function Sidebar({ onTriangulationComplete }: SidebarProps) {
     }));
     dispatch({ type: 'vertices/set', payload: vertices });
     dispatch({ type: 'triangles/set', payload: [] });
+    dispatch({ type: 'tetrahedra/set', payload: [] });
   };
 
   function handleDimensionChange(e: Event) {
@@ -56,8 +70,16 @@ export default function Sidebar({ onTriangulationComplete }: SidebarProps) {
     }
   }
 
+  const handleTriangulate = () => {
+    if (dimension === "TWO") {
+      triangulate();
+    } else if (dimension === "THREE") {
+      tetrahedralize();
+    }
+  }
+
   const minNumVertices = dimension === "TWO" ? 3 : 4;
-  const maxNumVertices = dimension === "THREE" ? 1000 : 100;
+  const maxNumVertices = 100;
   return (
     <div className="sidebar">
       <div className="sidebar-section">
@@ -86,7 +108,7 @@ export default function Sidebar({ onTriangulationComplete }: SidebarProps) {
       </div>
       <div className="sidebar-section">
         <h3>Triangulation</h3>
-        <SlButton variant="primary" onClick={triangulate} disabled={vertices.length < 3}>Triangulate</SlButton>
+        <SlButton variant="primary" onClick={handleTriangulate} disabled={vertices.length < 3}>Triangulate</SlButton>
       </div>
     </div>
   )

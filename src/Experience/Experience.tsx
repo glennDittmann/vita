@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls, Grid } from '@react-three/drei'
+import { OrbitControls, Grid, Tetrahedron } from '@react-three/drei'
 import { AxesHelper } from 'three'
 import './styles.css'
 import { Dimension } from '../../src-tauri/bindings/Dimension'
@@ -9,6 +9,9 @@ import Triangle from './Triangle'
 import { Triangle3 } from '../../src-tauri/bindings/Triangle3'
 import { useControls } from 'leva'
 import { Perf } from 'r3f-perf'
+import { Tetrahedron3 } from '../../src-tauri/bindings/Tetrahedron3'
+import Tet from './Tet'
+import Lights from './Lights'
 
 function Vertices() {
   const dimension = useSelector((state: any) => state.vertexSettings.dimension) as Dimension;
@@ -48,6 +51,7 @@ export default function Experience() {
 
   const vertices = useSelector((state: any) => state.vertexSettings.vertices);
   const triangles = useSelector((state: any) => state.vertexSettings.triangles);
+  const tetrahedra = useSelector((state: any) => state.vertexSettings.tetrahedra);
   const gridActive = useSelector((state: any) => state.experienceSettings.gridActive)
   const axisActive = useSelector((state: any) => state.experienceSettings.axisActive)
 
@@ -62,14 +66,13 @@ export default function Experience() {
       }}
     >
       {showPerf && <Perf position="top-left" />}
-      <ambientLight intensity={Math.PI / 2} />
-      <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
-      <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
+      <Lights />
       <OrbitControls />
       {gridActive && <Grid infiniteGrid position={[0, -0.001, 0]} />}
       {axisActive && <primitive object={new AxesHelper(5)} />}
       {vertices.length > 0 && <Vertices />}
       {triangles.length > 0 && triangles.map((triangle: Triangle3, index: number) => <Triangle key={index} triangle={triangle} />)}
+      {tetrahedra.length > 0 && tetrahedra.map((tetrahedron: Tetrahedron3, index: number) => <Tet key={index} tetrahedron={tetrahedron} />)}
     </Canvas>
   );
 }

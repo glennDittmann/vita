@@ -1,9 +1,11 @@
 import { Dimension } from "../../../../src-tauri/bindings/Dimension";
 import { Vertex3 } from "../../../../src-tauri/bindings/Vertex3";
 import { Triangle3 } from "../../../../src-tauri/bindings/Triangle3";
+import { Tetrahedron3 } from "../../../../src-tauri/bindings/Tetrahedron3";
 
 const initialState = {
-  dimension: "TWO" as Dimension,
+  dimension: "THREE" as Dimension,
+  tetrahedra: [] as Tetrahedron3[],
   triangles: [] as Triangle3[],
   vertices: [] as Vertex3[],
 }
@@ -14,6 +16,11 @@ export default function experienceReducer(state: any = initialState, action: any
       return {
         ...state,
         dimension: action.payload,
+      }
+    case 'tetrahedra/set':
+      return {
+        ...state,
+        tetrahedra: action.payload,
       }
     case 'triangles/set':
       return {

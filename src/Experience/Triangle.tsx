@@ -3,7 +3,7 @@ import { Triangle3 } from "../../src-tauri/bindings/Triangle3";
 import * as THREE from "three";
 
 export default function Triangle({ triangle }: { triangle: Triangle3 }) {
-  const f23Array = useMemo(() =>
+  const f32Array = useMemo(() =>
     Float32Array.from(
       [
         triangle.a.x, triangle.a.y, triangle.a.z,
@@ -18,7 +18,7 @@ export default function Triangle({ triangle }: { triangle: Triangle3 }) {
       <bufferGeometry attach="geometry">
         <bufferAttribute
           attach="attributes-position"
-          args={[f23Array, 3]}
+          args={[f32Array, 3]}
         />
       </bufferGeometry>
       <meshBasicMaterial
