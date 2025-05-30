@@ -67,7 +67,11 @@ export default function Tet({ tetrahedron }: { tetrahedron: Tetrahedron3 }) {
             args={[indices, 1]}
           />
         </bufferGeometry>
-        <lineBasicMaterial color={new THREE.Color(0xffffff)} transparent opacity={0.5} />
+        <lineBasicMaterial
+          color={new THREE.Color(0xffffff)}
+          transparent
+          opacity={0.5}
+        />
       </lineSegments>
     </>
   )
