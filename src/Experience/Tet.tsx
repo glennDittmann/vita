@@ -17,7 +17,7 @@ export default function Tet({ tetrahedron }: { tetrahedron: Tetrahedron3 }) {
     ), [tetrahedron]
   );
 
-  const indices = useMemo(() =>
+  const faceIndices = useMemo(() =>
     Uint16Array.from([
       0, 1, 2, // Face 1
       0, 1, 3, // Face 2
@@ -27,12 +27,22 @@ export default function Tet({ tetrahedron }: { tetrahedron: Tetrahedron3 }) {
     ), [tetrahedron]
   );
 
+  // Define the indices for the six edges of the tetrahedron
+  const edgeIndices = new Uint16Array([
+    0, 1, // Edge 1
+    0, 2, // Edge 2
+    0, 3, // Edge 3
+    1, 2, // Edge 4
+    1, 3, // Edge 5
+    2, 3, // Edge 6
+  ]);
+
   // Compute vertex normals after geometry is created
   useEffect(() => {
     if (geometryRef.current) {
       geometryRef.current.computeVertexNormals();
     }
-  }, [positions, indices]);
+  }, [positions, faceIndices]);
 
   return (
     <>
@@ -45,7 +55,7 @@ export default function Tet({ tetrahedron }: { tetrahedron: Tetrahedron3 }) {
           />
           <bufferAttribute
             attach="index"
-            args={[indices, 1]}
+            args={[faceIndices, 1]}
           />
         </bufferGeometry>
         <meshPhongMaterial
@@ -64,7 +74,7 @@ export default function Tet({ tetrahedron }: { tetrahedron: Tetrahedron3 }) {
           />
           <bufferAttribute
             attach="index"
-            args={[indices, 1]}
+            args={[edgeIndices, 1]}
           />
         </bufferGeometry>
         <lineBasicMaterial
