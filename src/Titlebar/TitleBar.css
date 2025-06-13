@@ -1,67 +1,67 @@
 .titlebar {
-  height: 32px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 8px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 9999;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	height: 32px;
+	background: rgba(255, 255, 255, 0.1);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0 8px;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 9999;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .titlebar-left {
-  display: flex;
-  align-items: center;
+	display: flex;
+	align-items: center;
 }
 
 .window-title {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.8);
-  margin-left: 8px;
-  font-weight: 500;
+	font-size: 12px;
+	color: rgba(255, 255, 255, 0.8);
+	margin-left: 8px;
+	font-weight: 500;
 }
 
 .titlebar-right {
-  display: flex;
-  gap: 4px;
+	display: flex;
+	gap: 4px;
 }
 
 .titlebar-button {
-  width: 24px;
-  height: 24px;
-  border: none;
-  background: transparent;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
+	width: 24px;
+	height: 24px;
+	border: none;
+	background: transparent;
+	border-radius: 4px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: all 0.2s ease;
 }
 
 .titlebar-button:hover {
-  background: rgba(255, 255, 255, 0.1);
+	background: rgba(255, 255, 255, 0.1);
 }
 
 .titlebar-button.close:hover {
-  background: #ff5555;
+	background: #ff5555;
 }
 
 .titlebar-button svg {
-  fill: rgba(255, 255, 255, 0.8);
-  transition: fill 0.2s ease;
+	fill: rgba(255, 255, 255, 0.8);
+	transition: fill 0.2s ease;
 }
 
 .titlebar-button:hover svg {
-  fill: rgba(255, 255, 255, 1);
+	fill: rgba(255, 255, 255, 1);
 }
 
 .titlebar-button.close:hover svg {
-  fill: white;
+	fill: white;
 }

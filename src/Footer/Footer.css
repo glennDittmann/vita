@@ -1,22 +1,22 @@
 .footer {
-  color: var(--white);
-  background: rgba(255, 255, 255, 0.05);
-  text-align: center;
-  padding: 8px 16px;
-  margin: 8px;
-  border-radius: 8px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+	color: var(--white);
+	background: rgba(255, 255, 255, 0.05);
+	text-align: center;
+	padding: 8px 16px;
+	margin: 8px;
+	border-radius: 8px;
+	border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .footer-controls {
-  display: flex;
-  gap: 16px;
+	display: flex;
+	gap: 16px;
 }
 
 .control {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--white);
-  font-size: 0.9em;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	color: var(--white);
+	font-size: 0.9em;
 }
