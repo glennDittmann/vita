@@ -42,6 +42,38 @@ function Vertices() {
 	);
 }
 
+function LiftedVertices() {
+	const liftedVertices = useAppSelector(
+		(state) => state.liftedVertices.liftedVertices,
+	);
+
+	const points = useMemo(() => {
+		const points = new Float32Array(liftedVertices.length * 3);
+		for (let i = 0; i < liftedVertices.length; i++) {
+			const i3 = i * 3;
+			points[i3] = liftedVertices[i].x;
+			points[i3 + 1] = liftedVertices[i].y;
+			points[i3 + 2] = liftedVertices[i].z;
+		}
+		return points;
+	}, [liftedVertices]);
+
+	return (
+		<points>
+			<bufferGeometry>
+				<bufferAttribute
+					attach="attributes-position"
+					count={liftedVertices.length}
+					array={points}
+					itemSize={3}
+					args={[points, 3]}
+				/>
+			</bufferGeometry>
+			<pointsMaterial size={0.15} color="#ff6b6b" />
+		</points>
+	);
+}
+
 export default function Experience() {
 	const { showPerf } = useControls("perf", {
 		showPerf: false,
@@ -50,6 +82,9 @@ export default function Experience() {
 	const vertices = useAppSelector((state) => state.vertexSettings.vertices);
 	const triangles = useAppSelector((state) => state.vertexSettings.triangles);
 	const tetrahedra = useAppSelector((state) => state.vertexSettings.tetrahedra);
+	const liftedVertices = useAppSelector(
+		(state) => state.liftedVertices.liftedVertices,
+	);
 	const gridActive = useAppSelector(
 		(state) => state.experienceSettings.gridActive,
 	);
@@ -73,6 +108,7 @@ export default function Experience() {
 			{gridActive && <Grid infiniteGrid position={[0, -0.001, 0]} />}
 			{axisActive && <primitive object={new AxesHelper(5)} />}
 			{vertices.length > 0 && <Vertices />}
+			{liftedVertices.length > 0 && <LiftedVertices />}
 			{triangles.length > 0 &&
 				triangles.map((triangle: Triangle3) => (
 					<Triangle key={triangle.id} triangle={triangle} />

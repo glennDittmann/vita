@@ -16,6 +16,10 @@ import "./Sidebar.css";
 import type { Dimension } from "../../src-tauri/bindings/Dimension";
 import type { Vertex3 } from "../../src-tauri/bindings/Vertex3";
 import {
+	clearLiftedVertices,
+	setLiftedVertices,
+} from "../store/features/liftedVertices/liftedVerticesSlice";
+import {
 	setDimension,
 	setTetrahedra,
 	setTriangles,
@@ -71,6 +75,18 @@ export default function Sidebar({ onTriangulationComplete }: SidebarProps) {
 		dispatch(setVertices(vertices));
 		dispatch(setTriangles([]));
 		dispatch(setTetrahedra([]));
+		dispatch(clearLiftedVertices());
+	};
+
+	const handleLift = () => {
+		if (dimension === "TWO" && vertices.length > 0) {
+			const liftedVertices: Vertex3[] = vertices.map((vertex) => ({
+				x: vertex.x,
+				y: vertex.x * vertex.x + vertex.y * vertex.y,
+				z: vertex.y,
+			}));
+			dispatch(setLiftedVertices(liftedVertices));
+		}
 	};
 
 	function handleDimensionChange(e: Event) {
@@ -79,6 +95,7 @@ export default function Sidebar({ onTriangulationComplete }: SidebarProps) {
 			dispatch(setDimension("TWO"));
 		} else if (newMode === "THREE") {
 			dispatch(setDimension("THREE"));
+			dispatch(clearLiftedVertices());
 		}
 	}
 
@@ -123,6 +140,18 @@ export default function Sidebar({ onTriangulationComplete }: SidebarProps) {
 					Create Vertices
 				</SlButton>
 			</div>
+			{dimension === "TWO" && (
+				<div className="sidebar-section">
+					<h3>Lift Vertices</h3>
+					<SlButton
+						variant="primary"
+						onClick={handleLift}
+						disabled={vertices.length === 0}
+					>
+						Lift
+					</SlButton>
+				</div>
+			)}
 			<div className="sidebar-section">
 				<h3>Triangulation</h3>
 				<SlButton
