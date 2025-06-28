@@ -1,8 +1,8 @@
-import { useAppSelector } from "../store/hooks";
 import { Grid, OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { useMemo } from "react";
 import { AxesHelper } from "three";
+import { useAppSelector } from "../store/hooks";
 import "./styles.css";
 import { useControls } from "leva";
 import { Perf } from "r3f-perf";
@@ -49,9 +49,7 @@ export default function Experience() {
 
 	const vertices = useAppSelector((state) => state.vertexSettings.vertices);
 	const triangles = useAppSelector((state) => state.vertexSettings.triangles);
-	const tetrahedra = useAppSelector(
-		(state) => state.vertexSettings.tetrahedra,
-	);
+	const tetrahedra = useAppSelector((state) => state.vertexSettings.tetrahedra);
 	const gridActive = useAppSelector(
 		(state) => state.experienceSettings.gridActive,
 	);

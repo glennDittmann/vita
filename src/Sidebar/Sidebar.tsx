@@ -7,15 +7,20 @@ import SlRange from "@shoelace-style/shoelace/dist/react/range/index.js";
 import { invoke } from "@tauri-apps/api/core";
 import { info } from "@tauri-apps/plugin-log";
 import { useState } from "react";
-import { useAppDispatch, useAppSelector } from "../store/hooks";
 import type { TetrahedralizationResult } from "../../src-tauri/bindings/TetrahedralizationResult";
 // BINDINGS
 import type { TriangulationRequest } from "../../src-tauri/bindings/TriangulationRequest";
 import type { TriangulationResult } from "../../src-tauri/bindings/TriangulationResult";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 import "./Sidebar.css";
 import type { Dimension } from "../../src-tauri/bindings/Dimension";
 import type { Vertex3 } from "../../src-tauri/bindings/Vertex3";
-import { setDimension, setTetrahedra, setTriangles, setVertices } from "../store/features/vertexSettings/vertexSettingsSlice";
+import {
+	setDimension,
+	setTetrahedra,
+	setTriangles,
+	setVertices,
+} from "../store/features/vertexSettings/vertexSettingsSlice";
 
 interface SidebarProps {
 	onTriangulationComplete: (numTriangles: number) => void;

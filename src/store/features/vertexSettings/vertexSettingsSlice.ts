@@ -34,9 +34,9 @@ const vertexSettingsSlice = createSlice({
 		setVertices: (state, action: PayloadAction<Vertex3[]>) => {
 			state.vertices = action.payload;
 		},
-	}
+	},
+});
 
-})
-
-export const { setDimension, setTetrahedra, setTriangles, setVertices } = vertexSettingsSlice.actions;
+export const { setDimension, setTetrahedra, setTriangles, setVertices } =
+	vertexSettingsSlice.actions;
 export default vertexSettingsSlice.reducer;
