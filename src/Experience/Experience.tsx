@@ -74,12 +74,12 @@ export default function Experience() {
 			{axisActive && <primitive object={new AxesHelper(5)} />}
 			{vertices.length > 0 && <Vertices />}
 			{triangles.length > 0 &&
-				triangles.map((triangle: Triangle3, index: number) => (
-					<Triangle key={index} triangle={triangle} />
+				triangles.map((triangle: Triangle3) => (
+					<Triangle key={triangle.id} triangle={triangle} />
 				))}
 			{tetrahedra.length > 0 &&
-				tetrahedra.map((tetrahedron: Tetrahedron3, index: number) => (
-					<Tet key={index} tetrahedron={tetrahedron} />
+				tetrahedra.map((tetrahedron: Tetrahedron3) => (
+					<Tet key={tetrahedron.id} tetrahedron={tetrahedron} />
 				))}
 		</Canvas>
 	);

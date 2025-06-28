@@ -2,7 +2,4 @@
 import type { Triangle3 } from "./Triangle3";
 import type { Vertex3 } from "./Vertex3";
 
-export type TriangulationResult = {
-	triangles: Array<Triangle3>;
-	vertices: Array<Vertex3>;
-};
+export type TriangulationResult = { triangles: Array<Triangle3>, vertices: Array<Vertex3>, };

@@ -4,8 +4,9 @@
 	"version": "0.1.0",
 	"type": "module",
 	"scripts": {
-		"dev": "vite",
 		"build": "tsc && vite build",
+		"dev": "vite",
+		"export_types": "cd src-tauri && cargo test export_bindings",
 		"lint": "biome check src/",
 		"lint:fix": "biome check src/ --write",
 		"lint:fix:unsafe": "biome check src/ --write --unsafe",

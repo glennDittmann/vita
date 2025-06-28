@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use ts_rs::TS;
+use uuid;
 
 #[derive(Debug, Serialize, Deserialize, TS)]
 #[serde(rename_all = "UPPERCASE")]
@@ -90,6 +91,7 @@ impl From<[f64; 3]> for Vertex3 {
 #[derive(Debug, Serialize, Deserialize, TS)]
 #[ts(export)]
 pub struct Triangle3 {
+    pub id: String,
     pub a: Vertex3,
     pub b: Vertex3,
     pub c: Vertex3,
@@ -98,6 +100,7 @@ pub struct Triangle3 {
 impl From<[[f64; 2]; 3]> for Triangle3 {
     fn from(value: [[f64; 2]; 3]) -> Self {
         Self {
+            id: uuid::Uuid::new_v4().to_string(),
             a: Vertex3 {
                 x: value[0][0],
                 y: 0.0,
@@ -120,6 +123,7 @@ impl From<[[f64; 2]; 3]> for Triangle3 {
 #[derive(Debug, Serialize, Deserialize, TS)]
 #[ts(export)]
 pub struct Tetrahedron3 {
+    pub id: String,
     pub a: Vertex3,
     pub b: Vertex3,
     pub c: Vertex3,
@@ -129,6 +133,7 @@ pub struct Tetrahedron3 {
 impl From<[[f64; 3]; 4]> for Tetrahedron3 {
     fn from(value: [[f64; 3]; 4]) -> Self {
         Self {
+            id: uuid::Uuid::new_v4().to_string(),
             a: Vertex3 {
                 x: value[0][0],
                 y: value[0][1],

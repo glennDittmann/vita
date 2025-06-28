@@ -2,7 +2,4 @@
 import type { Tetrahedron3 } from "./Tetrahedron3";
 import type { Vertex3 } from "./Vertex3";
 
-export type TetrahedralizationResult = {
-	tetrahedra: Array<Tetrahedron3>;
-	vertices: Array<Vertex3>;
-};
+export type TetrahedralizationResult = { tetrahedra: Array<Tetrahedron3>, vertices: Array<Vertex3>, };
