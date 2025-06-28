@@ -14,7 +14,12 @@ import type { TriangulationResult } from "../../src-tauri/bindings/Triangulation
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import "./Sidebar.css";
 import type { Dimension } from "../../src-tauri/bindings/Dimension";
+import type { Triangle3 } from "../../src-tauri/bindings/Triangle3";
 import type { Vertex3 } from "../../src-tauri/bindings/Vertex3";
+import {
+	clearLiftedTriangles,
+	setLiftedTriangles,
+} from "../store/features/liftedTriangles/liftedTrianglesSlice";
 import {
 	clearLiftedVertices,
 	setLiftedVertices,
@@ -34,6 +39,7 @@ export default function Sidebar({ onTriangulationComplete }: SidebarProps) {
 	const dispatch = useAppDispatch();
 	const dimension = useAppSelector((state) => state.vertexSettings.dimension);
 	const vertices = useAppSelector((state) => state.vertexSettings.vertices);
+	const triangles = useAppSelector((state) => state.vertexSettings.triangles);
 	const [numVertices, setNumVertices] = useState(4);
 
 	async function triangulate() {
@@ -47,6 +53,7 @@ export default function Sidebar({ onTriangulationComplete }: SidebarProps) {
 		);
 
 		dispatch(setTriangles(triangulationResult.triangles));
+		dispatch(clearLiftedTriangles());
 
 		onTriangulationComplete(triangulationResult.triangles.length);
 	}
@@ -62,30 +69,56 @@ export default function Sidebar({ onTriangulationComplete }: SidebarProps) {
 		);
 
 		dispatch(setTetrahedra(tetrahedralizationResult.tetrahedra));
+		dispatch(clearLiftedTriangles());
 
 		onTriangulationComplete(tetrahedralizationResult.tetrahedra.length);
 	}
 
 	const handleCreateVertices = () => {
 		const vertices: Vertex3[] = new Array(numVertices).fill(0).map(() => ({
-			x: (Math.random() - 0.5) * 10,
-			y: dimension === "TWO" ? 0 : (Math.random() - 0.5) * 10,
-			z: (Math.random() - 0.5) * 10,
+			x: (Math.random() - 0.5) * 5,
+			y: dimension === "TWO" ? 0 : (Math.random() - 0.5) * 5,
+			z: (Math.random() - 0.5) * 5,
 		}));
 		dispatch(setVertices(vertices));
 		dispatch(setTriangles([]));
 		dispatch(setTetrahedra([]));
 		dispatch(clearLiftedVertices());
+		dispatch(clearLiftedTriangles());
 	};
 
 	const handleLift = () => {
 		if (dimension === "TWO" && vertices.length > 0) {
 			const liftedVertices: Vertex3[] = vertices.map((vertex) => ({
 				x: vertex.x,
-				y: vertex.x * vertex.x + vertex.y * vertex.y,
-				z: vertex.y,
+				y: vertex.x * vertex.x + vertex.z * vertex.z,
+				z: vertex.z,
 			}));
 			dispatch(setLiftedVertices(liftedVertices));
+		}
+	};
+
+	const handleLiftTriangles = () => {
+		if (dimension === "TWO" && triangles.length > 0) {
+			const liftedTriangles: Triangle3[] = triangles.map((triangle) => ({
+				id: `lifted-${triangle.id}`,
+				a: {
+					x: triangle.a.x,
+					y: triangle.a.x * triangle.a.x + triangle.a.z * triangle.a.z,
+					z: triangle.a.z,
+				},
+				b: {
+					x: triangle.b.x,
+					y: triangle.b.x * triangle.b.x + triangle.b.z * triangle.b.z,
+					z: triangle.b.z,
+				},
+				c: {
+					x: triangle.c.x,
+					y: triangle.c.x * triangle.c.x + triangle.c.z * triangle.c.z,
+					z: triangle.c.z,
+				},
+			}));
+			dispatch(setLiftedTriangles(liftedTriangles));
 		}
 	};
 
@@ -96,6 +129,7 @@ export default function Sidebar({ onTriangulationComplete }: SidebarProps) {
 		} else if (newMode === "THREE") {
 			dispatch(setDimension("THREE"));
 			dispatch(clearLiftedVertices());
+			dispatch(clearLiftedTriangles());
 		}
 	}
 
@@ -162,6 +196,18 @@ export default function Sidebar({ onTriangulationComplete }: SidebarProps) {
 					Triangulate
 				</SlButton>
 			</div>
+			{dimension === "TWO" && (
+				<div className="sidebar-section">
+					<h3>Lift Triangles</h3>
+					<SlButton
+						variant="primary"
+						onClick={handleLiftTriangles}
+						disabled={triangles.length === 0}
+					>
+						Lift Triangles
+					</SlButton>
+				</div>
+			)}
 		</div>
 	);
 }

@@ -8,6 +8,7 @@ import { useControls } from "leva";
 import { Perf } from "r3f-perf";
 import type { Tetrahedron3 } from "../../src-tauri/bindings/Tetrahedron3";
 import type { Triangle3 } from "../../src-tauri/bindings/Triangle3";
+import LiftedTriangle from "./LiftedTriangle";
 import Lights from "./Lights";
 import Tet from "./Tet";
 import Triangle from "./Triangle";
@@ -85,6 +86,9 @@ export default function Experience() {
 	const liftedVertices = useAppSelector(
 		(state) => state.liftedVertices.liftedVertices,
 	);
+	const liftedTriangles = useAppSelector(
+		(state) => state.liftedTriangles.liftedTriangles,
+	);
 	const gridActive = useAppSelector(
 		(state) => state.experienceSettings.gridActive,
 	);
@@ -112,6 +116,10 @@ export default function Experience() {
 			{triangles.length > 0 &&
 				triangles.map((triangle: Triangle3) => (
 					<Triangle key={triangle.id} triangle={triangle} />
+				))}
+			{liftedTriangles.length > 0 &&
+				liftedTriangles.map((triangle: Triangle3) => (
+					<LiftedTriangle key={triangle.id} triangle={triangle} />
 				))}
 			{tetrahedra.length > 0 &&
 				tetrahedra.map((tetrahedron: Tetrahedron3) => (
