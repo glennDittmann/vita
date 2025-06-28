@@ -7,7 +7,7 @@ import SlRange from "@shoelace-style/shoelace/dist/react/range/index.js";
 import { invoke } from "@tauri-apps/api/core";
 import { info } from "@tauri-apps/plugin-log";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 import type { TetrahedralizationResult } from "../../src-tauri/bindings/TetrahedralizationResult";
 // BINDINGS
 import type { TriangulationRequest } from "../../src-tauri/bindings/TriangulationRequest";
@@ -22,9 +22,9 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ onTriangulationComplete }: SidebarProps) {
-	const dispatch = useDispatch();
-	const dimension = useSelector((state: any) => state.vertexSettings.dimension);
-	const vertices = useSelector((state: any) => state.vertexSettings.vertices);
+	const dispatch = useAppDispatch();
+	const dimension = useAppSelector((state) => state.vertexSettings.dimension);
+	const vertices = useAppSelector((state) => state.vertexSettings.vertices);
 	const [numVertices, setNumVertices] = useState(4);
 
 	async function triangulate() {

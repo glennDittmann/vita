@@ -1,15 +1,15 @@
 import SlSwitch from "@shoelace-style/shoelace/dist/react/switch/index.js";
-import { useDispatch, useSelector } from "react-redux";
 import { toggleAxis, toggleGrid } from "../store/features/experienceSettings/experienceSettingsSlice";
+import { useAppDispatch, useAppSelector,  } from "../store/hooks";
 import "./Footer.css";
 
 export default function Footer() {
-	const dispatch = useDispatch();
-	const axisActive = useSelector(
-		(state: any) => state.experienceSettings.axisActive,
+	const dispatch = useAppDispatch();
+	const axisActive = useAppSelector(
+		(state) => state.experienceSettings.axisActive,
 	);
-	const gridActive = useSelector(
-		(state: any) => state.experienceSettings.gridActive,
+	const gridActive = useAppSelector(
+		(state) => state.experienceSettings.gridActive,
 	);
 
 	return (

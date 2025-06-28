@@ -1,7 +1,7 @@
+import { useAppSelector } from "../store/hooks";
 import { Grid, OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { useMemo } from "react";
-import { useSelector } from "react-redux";
 import { AxesHelper } from "three";
 import "./styles.css";
 import { useControls } from "leva";
@@ -13,7 +13,7 @@ import Tet from "./Tet";
 import Triangle from "./Triangle";
 
 function Vertices() {
-	const vertices = useSelector((state: any) => state.vertexSettings.vertices);
+	const vertices = useAppSelector((state) => state.vertexSettings.vertices);
 
 	const points = useMemo(() => {
 		const points = new Float32Array(vertices.length * 3);
@@ -47,16 +47,16 @@ export default function Experience() {
 		showPerf: false,
 	});
 
-	const vertices = useSelector((state: any) => state.vertexSettings.vertices);
-	const triangles = useSelector((state: any) => state.vertexSettings.triangles);
-	const tetrahedra = useSelector(
-		(state: any) => state.vertexSettings.tetrahedra,
+	const vertices = useAppSelector((state) => state.vertexSettings.vertices);
+	const triangles = useAppSelector((state) => state.vertexSettings.triangles);
+	const tetrahedra = useAppSelector(
+		(state) => state.vertexSettings.tetrahedra,
 	);
-	const gridActive = useSelector(
-		(state: any) => state.experienceSettings.gridActive,
+	const gridActive = useAppSelector(
+		(state) => state.experienceSettings.gridActive,
 	);
-	const axisActive = useSelector(
-		(state: any) => state.experienceSettings.axisActive,
+	const axisActive = useAppSelector(
+		(state) => state.experienceSettings.axisActive,
 	);
 
 	return (
