@@ -15,6 +15,7 @@ import type { TriangulationResult } from "../../src-tauri/bindings/Triangulation
 import "./Sidebar.css";
 import type { Dimension } from "../../src-tauri/bindings/Dimension";
 import type { Vertex3 } from "../../src-tauri/bindings/Vertex3";
+import { setDimension, setTetrahedra, setTriangles, setVertices } from "../store/features/vertexSettings/vertexSettingsSlice";
 
 interface SidebarProps {
 	onTriangulationComplete: (numTriangles: number) => void;
@@ -36,7 +37,7 @@ export default function Sidebar({ onTriangulationComplete }: SidebarProps) {
 			},
 		);
 
-		dispatch({ type: "triangles/set", payload: triangulationResult.triangles });
+		dispatch(setTriangles(triangulationResult.triangles));
 
 		onTriangulationComplete(triangulationResult.triangles.length);
 	}
@@ -51,10 +52,7 @@ export default function Sidebar({ onTriangulationComplete }: SidebarProps) {
 			},
 		);
 
-		dispatch({
-			type: "tetrahedra/set",
-			payload: tetrahedralizationResult.tetrahedra,
-		});
+		dispatch(setTetrahedra(tetrahedralizationResult.tetrahedra));
 
 		onTriangulationComplete(tetrahedralizationResult.tetrahedra.length);
 	}
@@ -65,17 +63,17 @@ export default function Sidebar({ onTriangulationComplete }: SidebarProps) {
 			y: dimension === "TWO" ? 0 : (Math.random() - 0.5) * 10,
 			z: (Math.random() - 0.5) * 10,
 		}));
-		dispatch({ type: "vertices/set", payload: vertices });
-		dispatch({ type: "triangles/set", payload: [] });
-		dispatch({ type: "tetrahedra/set", payload: [] });
+		dispatch(setVertices(vertices));
+		dispatch(setTriangles([]));
+		dispatch(setTetrahedra([]));
 	};
 
 	function handleDimensionChange(e: Event) {
 		const newMode = (e.currentTarget as SlRadioGroupElement).value as Dimension;
 		if (newMode === "TWO") {
-			dispatch({ type: "dimension/set", payload: "TWO" });
+			dispatch(setDimension("TWO"));
 		} else if (newMode === "THREE") {
-			dispatch({ type: "dimension/set", payload: "THREE" });
+			dispatch(setDimension("THREE"));
 		}
 	}
 

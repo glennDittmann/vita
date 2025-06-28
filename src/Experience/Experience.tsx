@@ -1,4 +1,4 @@
-import { Grid, OrbitControls, Tetrahedron } from "@react-three/drei";
+import { Grid, OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
@@ -6,7 +6,6 @@ import { AxesHelper } from "three";
 import "./styles.css";
 import { useControls } from "leva";
 import { Perf } from "r3f-perf";
-import type { Dimension } from "../../src-tauri/bindings/Dimension";
 import type { Tetrahedron3 } from "../../src-tauri/bindings/Tetrahedron3";
 import type { Triangle3 } from "../../src-tauri/bindings/Triangle3";
 import Lights from "./Lights";
@@ -14,9 +13,6 @@ import Tet from "./Tet";
 import Triangle from "./Triangle";
 
 function Vertices() {
-	const dimension = useSelector(
-		(state: any) => state.vertexSettings.dimension,
-	) as Dimension;
 	const vertices = useSelector((state: any) => state.vertexSettings.vertices);
 
 	const points = useMemo(() => {

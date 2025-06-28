@@ -18,7 +18,6 @@ export default function TitleBar() {
 
 	const minimize = () => appWindow.minimize();
 	const maximize = () => {
-		console.log("toggle maximize");
 		appWindow.toggleMaximize();
 	};
 	const close = () => appWindow.close();

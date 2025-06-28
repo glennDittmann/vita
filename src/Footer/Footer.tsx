@@ -1,5 +1,6 @@
 import SlSwitch from "@shoelace-style/shoelace/dist/react/switch/index.js";
 import { useDispatch, useSelector } from "react-redux";
+import { toggleAxis, toggleGrid } from "../store/features/experienceSettings/experienceSettingsSlice";
 import "./Footer.css";
 
 export default function Footer() {
@@ -11,32 +12,16 @@ export default function Footer() {
 		(state: any) => state.experienceSettings.gridActive,
 	);
 
-	const handleGridChange = () => {
-		if (gridActive) {
-			dispatch({ type: "grid/deactivate" });
-		} else {
-			dispatch({ type: "grid/activate" });
-		}
-	};
-
-	const handleAxisChange = () => {
-		if (axisActive) {
-			dispatch({ type: "axis/deactivate" });
-		} else {
-			dispatch({ type: "axis/activate" });
-		}
-	};
-
 	return (
 		<footer className="footer">
 			<div className="footer-controls">
 				<div className="control">
-					<SlSwitch checked={gridActive} onSlChange={handleGridChange}>
+					<SlSwitch checked={gridActive} onSlChange={() => dispatch(toggleGrid())}>
 						Grid
 					</SlSwitch>
 				</div>
 				<div className="control">
-					<SlSwitch checked={axisActive} onSlChange={handleAxisChange}>
+					<SlSwitch checked={axisActive} onSlChange={() => dispatch(toggleAxis())}>
 						Axis
 					</SlSwitch>
 				</div>
