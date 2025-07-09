@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Experience from "./Experience/Experience";
 import Footer from "./Footer/Footer";
 import Sidebar from "./Sidebar/Sidebar";
@@ -6,10 +5,10 @@ import TitleBar from "./Titlebar/TitleBar";
 import "./reset.css";
 import "./styles.css";
 import "@mantine/core/styles.css";
-import '@mantine/notifications/styles.css';
+import "@mantine/notifications/styles.css";
 
 import { MantineProvider } from "@mantine/core";
-import { Notifications } from '@mantine/notifications';
+import { Notifications } from "@mantine/notifications";
 
 export default function App() {
 	return (

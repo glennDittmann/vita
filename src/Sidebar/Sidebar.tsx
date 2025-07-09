@@ -8,6 +8,7 @@ import type { TriangulationRequest } from "../../src-tauri/bindings/Triangulatio
 import type { TriangulationResult } from "../../src-tauri/bindings/TriangulationResult";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import "./Sidebar.css";
+import { notifications } from "@mantine/notifications";
 import type { Dimension } from "../../src-tauri/bindings/Dimension";
 import type { Triangle3 } from "../../src-tauri/bindings/Triangle3";
 import type { Vertex3 } from "../../src-tauri/bindings/Vertex3";
@@ -25,7 +26,6 @@ import {
 	setTriangles,
 	setVertices,
 } from "../store/features/vertexSettings/vertexSettingsSlice";
-import { notifications } from "@mantine/notifications";
 
 export default function Sidebar() {
 	const dispatch = useAppDispatch();
