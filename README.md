@@ -16,8 +16,11 @@ A modern web application built with Three.js and React that visualizes 3D point 
 - TypeScript for type safety
 - Vite for build tooling
 - Tauri for desktop integration
+- Biome for linting and formatting
 
 ## Getting Started
+
+0. Follow the [setup to for tauri 2.0](https://tauri.app/start/prerequisites/) on your OS. 
 
 1. Install dependencies:
 ```bash
