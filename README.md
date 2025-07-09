@@ -5,6 +5,7 @@ A modern web application built with Three.js and React that visualizes 3D point 
 ## Features
 
 - Interactive 3D point cloud visualization
+- Weighted Delaunay Triangulation of 2D and 3D point clouds
 - Dynamic vertex generation
 - Modern lighting system
 - Responsive design
