@@ -1,10 +1,10 @@
-import SlSwitch from "@shoelace-style/shoelace/dist/react/switch/index.js";
 import {
 	toggleAxis,
 	toggleGrid,
 } from "../store/features/experienceSettings/experienceSettingsSlice";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import "./Footer.css";
+import { Switch } from "@mantine/core";
 
 export default function Footer() {
 	const dispatch = useAppDispatch();
@@ -19,20 +19,18 @@ export default function Footer() {
 		<footer className="footer">
 			<div className="footer-controls">
 				<div className="control">
-					<SlSwitch
+					<Switch
 						checked={gridActive}
-						onSlChange={() => dispatch(toggleGrid())}
-					>
-						Grid
-					</SlSwitch>
+						onChange={() => dispatch(toggleGrid())}
+						label="Grid"
+					/>
 				</div>
 				<div className="control">
-					<SlSwitch
+					<Switch
 						checked={axisActive}
-						onSlChange={() => dispatch(toggleAxis())}
-					>
-						Axis
-					</SlSwitch>
+						onChange={() => dispatch(toggleAxis())}
+						label="Axis"
+					/>
 				</div>
 			</div>
 		</footer>

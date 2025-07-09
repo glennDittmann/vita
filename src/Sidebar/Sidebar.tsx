@@ -1,9 +1,4 @@
-import type SlRadioGroupElement from "@shoelace-style/shoelace/dist/components/radio-group/radio-group.js";
-import type SlRangeElement from "@shoelace-style/shoelace/dist/components/range/range.js";
-import SlButton from "@shoelace-style/shoelace/dist/react/button/index.js";
-import SlRadioButton from "@shoelace-style/shoelace/dist/react/radio-button/index.js";
-import SlRadioGroup from "@shoelace-style/shoelace/dist/react/radio-group/index.js";
-import SlRange from "@shoelace-style/shoelace/dist/react/range/index.js";
+import { Button, SegmentedControl, Slider } from "@mantine/core";
 import { invoke } from "@tauri-apps/api/core";
 import { info } from "@tauri-apps/plugin-log";
 import { useState } from "react";
@@ -30,12 +25,9 @@ import {
 	setTriangles,
 	setVertices,
 } from "../store/features/vertexSettings/vertexSettingsSlice";
+import { notifications } from "@mantine/notifications";
 
-interface SidebarProps {
-	onTriangulationComplete: (numTriangles: number) => void;
-}
-
-export default function Sidebar({ onTriangulationComplete }: SidebarProps) {
+export default function Sidebar() {
 	const dispatch = useAppDispatch();
 	const dimension = useAppSelector((state) => state.vertexSettings.dimension);
 	const vertices = useAppSelector((state) => state.vertexSettings.vertices);
@@ -55,7 +47,11 @@ export default function Sidebar({ onTriangulationComplete }: SidebarProps) {
 		dispatch(setTriangles(triangulationResult.triangles));
 		dispatch(clearLiftedTriangles());
 
-		onTriangulationComplete(triangulationResult.triangles.length);
+		notifications.show({
+			title: "Triangulation Complete",
+			message: `${triangulationResult.triangles.length} triangles created`,
+			withBorder: true,
+		});
 	}
 
 	async function tetrahedralize() {
@@ -71,7 +67,11 @@ export default function Sidebar({ onTriangulationComplete }: SidebarProps) {
 		dispatch(setTetrahedra(tetrahedralizationResult.tetrahedra));
 		dispatch(clearLiftedTriangles());
 
-		onTriangulationComplete(tetrahedralizationResult.tetrahedra.length);
+		notifications.show({
+			title: "Tetrahedralization Complete",
+			message: `${tetrahedralizationResult.tetrahedra.length} tetrahedra created`,
+			withBorder: true,
+		});
 	}
 
 	const handleCreateVertices = () => {
@@ -122,8 +122,8 @@ export default function Sidebar({ onTriangulationComplete }: SidebarProps) {
 		}
 	};
 
-	function handleDimensionChange(e: Event) {
-		const newMode = (e.currentTarget as SlRadioGroupElement).value as Dimension;
+	function handleDimensionChange(value: string) {
+		const newMode = value as Dimension;
 		if (newMode === "TWO") {
 			dispatch(setDimension("TWO"));
 		} else if (newMode === "THREE") {
@@ -146,66 +146,59 @@ export default function Sidebar({ onTriangulationComplete }: SidebarProps) {
 	return (
 		<div className="sidebar">
 			<div className="sidebar-section">
-				<SlRadioGroup
-					size="small"
-					label="Dimension"
-					name="dimension"
+				<SegmentedControl
 					value={dimension}
-					onSlChange={handleDimensionChange}
-				>
-					<SlRadioButton value="TWO">2D</SlRadioButton>
-					<SlRadioButton value="THREE">3D</SlRadioButton>
-				</SlRadioGroup>
+					onChange={(value) => {
+						handleDimensionChange(value);
+					}}
+					data={[
+						{ label: "2D", value: "TWO" },
+						{ label: "3D", value: "THREE" },
+					]}
+				/>
 			</div>
 			<div className="sidebar-section">
 				<h3>Create Vertices</h3>
 				<div className="slider-container">
-					<SlRange
+					<Slider
+						color="blue"
+						defaultValue={numVertices}
+						onChange={(value) => setNumVertices(value)}
 						min={minNumVertices}
 						max={maxNumVertices}
-						value={numVertices}
-						onSlChange={(e) =>
-							setNumVertices((e.currentTarget as SlRangeElement).value)
-						}
+						marks={[
+							{ value: 20, label: "20" },
+							{ value: 50, label: "50" },
+							{ value: 80, label: "80" },
+						]}
 					/>
 					<div className="slider-value">{numVertices} vertices</div>
 				</div>
-				<SlButton variant="primary" onClick={handleCreateVertices}>
-					Create Vertices
-				</SlButton>
+				<Button onClick={handleCreateVertices}>Create Vertices</Button>
 			</div>
 			{dimension === "TWO" && (
 				<div className="sidebar-section">
 					<h3>Lift Vertices</h3>
-					<SlButton
-						variant="primary"
-						onClick={handleLift}
-						disabled={vertices.length === 0}
-					>
+					<Button onClick={handleLift} disabled={vertices.length === 0}>
 						Lift
-					</SlButton>
+					</Button>
 				</div>
 			)}
 			<div className="sidebar-section">
 				<h3>Triangulation</h3>
-				<SlButton
-					variant="primary"
-					onClick={handleTriangulate}
-					disabled={vertices.length < 3}
-				>
+				<Button onClick={handleTriangulate} disabled={vertices.length < 3}>
 					Triangulate
-				</SlButton>
+				</Button>
 			</div>
 			{dimension === "TWO" && (
 				<div className="sidebar-section">
 					<h3>Lift Triangles</h3>
-					<SlButton
-						variant="primary"
+					<Button
 						onClick={handleLiftTriangles}
 						disabled={triangles.length === 0}
 					>
 						Lift Triangles
-					</SlButton>
+					</Button>
 				</div>
 			)}
 		</div>
