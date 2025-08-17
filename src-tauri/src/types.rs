@@ -180,7 +180,7 @@ pub struct Cluster2 {
     pub bounds: ClusterBounds2,
 }
 
-#[derive(Debug, Serialize, Deserialize, TS)]
+#[derive(Debug, Clone, Serialize, Deserialize, TS)]
 #[ts(export)]
 pub struct ClusterBounds2 {
     pub min_x: f64,
