@@ -26,12 +26,20 @@ import {
 	setTriangles,
 	setVertices,
 } from "../store/features/vertexSettings/vertexSettingsSlice";
+import {
+	TriangulationMethod,
+	selectTriangulationMethod,
+	selectIsVertexClusteringMethod,
+	setTriangulationMethod,
+} from "../store/features/clustering/clusteringSlice";
 
 export default function Sidebar() {
 	const dispatch = useAppDispatch();
 	const dimension = useAppSelector((state) => state.vertexSettings.dimension);
 	const vertices = useAppSelector((state) => state.vertexSettings.vertices);
 	const triangles = useAppSelector((state) => state.vertexSettings.triangles);
+	const triangulationMethod = useAppSelector(selectTriangulationMethod);
+	const isVertexClustering = useAppSelector(selectIsVertexClusteringMethod);
 	const [numVertices, setNumVertices] = useState(4);
 
 	async function triangulate() {
@@ -133,6 +141,11 @@ export default function Sidebar() {
 		}
 	}
 
+	function handleMethodChange(value: string) {
+		const newMethod = value as TriangulationMethod;
+		dispatch(setTriangulationMethod(newMethod));
+	}
+
 	const handleTriangulate = () => {
 		if (dimension === "TWO") {
 			triangulate();
@@ -143,8 +156,21 @@ export default function Sidebar() {
 
 	const minNumVertices = dimension === "TWO" ? 3 : 4;
 	const maxNumVertices = 100;
+	const is3DDisabledForClustering = isVertexClustering && dimension === "THREE";
+
 	return (
 		<div className="sidebar">
+			<div className="sidebar-section">
+				<h3>Triangulation Method</h3>
+				<SegmentedControl
+					value={triangulationMethod}
+					onChange={handleMethodChange}
+					data={[
+						{ label: "e-Circles", value: TriangulationMethod.ECIRCLES },
+						{ label: "Vertex Clustering", value: TriangulationMethod.VERTEX_CLUSTERING },
+					]}
+				/>
+			</div>
 			<div className="sidebar-section">
 				<SegmentedControl
 					value={dimension}
@@ -156,50 +182,79 @@ export default function Sidebar() {
 						{ label: "3D", value: "THREE" },
 					]}
 				/>
+				{is3DDisabledForClustering && (
+					<div style={{ marginTop: "8px", fontSize: "12px", color: "#868e96" }}>
+						3D mode is not supported for vertex clustering
+					</div>
+				)}
 			</div>
-			<div className="sidebar-section">
-				<h3>Create Vertices</h3>
-				<div className="slider-container">
-					<Slider
-						color="blue"
-						defaultValue={numVertices}
-						onChange={(value) => setNumVertices(value)}
-						min={minNumVertices}
-						max={maxNumVertices}
-						marks={[
-							{ value: 20, label: "20" },
-							{ value: 50, label: "50" },
-							{ value: 80, label: "80" },
-						]}
-					/>
-					<div className="slider-value">{numVertices} vertices</div>
-				</div>
-				<Button onClick={handleCreateVertices}>Create Vertices</Button>
-			</div>
-			{dimension === "TWO" && (
-				<div className="sidebar-section">
-					<h3>Lift Vertices</h3>
-					<Button onClick={handleLift} disabled={vertices.length === 0}>
-						Lift
-					</Button>
-				</div>
-			)}
-			<div className="sidebar-section">
-				<h3>Triangulation</h3>
-				<Button onClick={handleTriangulate} disabled={vertices.length < 3}>
-					Triangulate
-				</Button>
-			</div>
-			{dimension === "TWO" && (
-				<div className="sidebar-section">
-					<h3>Lift Triangles</h3>
-					<Button
-						onClick={handleLiftTriangles}
-						disabled={triangles.length === 0}
-					>
-						Lift Triangles
-					</Button>
-				</div>
+			{!is3DDisabledForClustering && (
+				<>
+					<div className="sidebar-section">
+						<h3>Create Vertices</h3>
+						<div className="slider-container">
+							<Slider
+								color="blue"
+								defaultValue={numVertices}
+								onChange={(value) => setNumVertices(value)}
+								min={minNumVertices}
+								max={maxNumVertices}
+								marks={[
+									{ value: 20, label: "20" },
+									{ value: 50, label: "50" },
+									{ value: 80, label: "80" },
+								]}
+							/>
+							<div className="slider-value">{numVertices} vertices</div>
+						</div>
+						<Button onClick={handleCreateVertices}>Create Vertices</Button>
+					</div>
+
+					{triangulationMethod === TriangulationMethod.ECIRCLES && (
+						<>
+							{dimension === "TWO" && (
+								<div className="sidebar-section">
+									<h3>Lift Vertices</h3>
+									<Button onClick={handleLift} disabled={vertices.length === 0}>
+										Lift
+									</Button>
+								</div>
+							)}
+							<div className="sidebar-section">
+								<h3>Triangulation</h3>
+								<Button onClick={handleTriangulate} disabled={vertices.length < 3}>
+									Triangulate
+								</Button>
+							</div>
+							{dimension === "TWO" && (
+								<div className="sidebar-section">
+									<h3>Lift Triangles</h3>
+									<Button
+										onClick={handleLiftTriangles}
+										disabled={triangles.length === 0}
+									>
+										Lift Triangles
+									</Button>
+								</div>
+							)}
+						</>
+					)}
+
+					{triangulationMethod === TriangulationMethod.VERTEX_CLUSTERING && (
+						<div className="sidebar-section">
+							<h3>Vertex Clustering Workflow</h3>
+							<Button disabled={vertices.length < 3}>
+								Cluster
+							</Button>
+							<Button disabled style={{ marginTop: "8px" }}>
+								Simplify
+							</Button>
+							<Button disabled style={{ marginTop: "8px" }}>
+								Triangulate
+							</Button>
+						</div>
+					)}
+				</>
 			)}
 		</div>
 	);
