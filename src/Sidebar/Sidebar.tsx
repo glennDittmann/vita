@@ -6,6 +6,10 @@ import type { TetrahedralizationResult } from "../../src-tauri/bindings/Tetrahed
 // BINDINGS
 import type { TriangulationRequest } from "../../src-tauri/bindings/TriangulationRequest";
 import type { TriangulationResult } from "../../src-tauri/bindings/TriangulationResult";
+import type { ClusteringRequest } from "../../src-tauri/bindings/ClusteringRequest";
+import type { ClusteringResult2 } from "../../src-tauri/bindings/ClusteringResult2";
+import type { SimplificationRequest2 } from "../../src-tauri/bindings/SimplificationRequest2";
+import type { SimplificationResult } from "../../src-tauri/bindings/SimplificationResult";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import "./Sidebar.css";
 import { notifications } from "@mantine/notifications";
@@ -30,7 +34,14 @@ import {
 	TriangulationMethod,
 	selectTriangulationMethod,
 	selectIsVertexClusteringMethod,
+	selectClusters,
+	selectIsClusteringComplete,
+	selectIsSimplificationComplete,
+	selectSimplifiedVertices,
 	setTriangulationMethod,
+	setClusteringResults,
+	setSimplificationResults,
+	resetClusteringWorkflow,
 } from "../store/features/clustering/clusteringSlice";
 
 export default function Sidebar() {
@@ -40,6 +51,10 @@ export default function Sidebar() {
 	const triangles = useAppSelector((state) => state.vertexSettings.triangles);
 	const triangulationMethod = useAppSelector(selectTriangulationMethod);
 	const isVertexClustering = useAppSelector(selectIsVertexClusteringMethod);
+	const clusters = useAppSelector(selectClusters);
+	const isClusteringComplete = useAppSelector(selectIsClusteringComplete);
+	const isSimplificationComplete = useAppSelector(selectIsSimplificationComplete);
+	const simplifiedVertices = useAppSelector(selectSimplifiedVertices);
 	const [numVertices, setNumVertices] = useState(4);
 
 	async function triangulate() {
@@ -93,6 +108,7 @@ export default function Sidebar() {
 		dispatch(setTetrahedra([]));
 		dispatch(clearLiftedVertices());
 		dispatch(clearLiftedTriangles());
+		dispatch(resetClusteringWorkflow());
 	};
 
 	const handleLift = () => {
@@ -153,6 +169,105 @@ export default function Sidebar() {
 			tetrahedralize();
 		}
 	};
+
+	// Vertex clustering workflow functions
+	async function handleCluster() {
+		try {
+			info(`Clustering ${vertices.length} vertices...`);
+
+			const clusteringResult = await invoke<ClusteringResult2>(
+				"cluster_vertices",
+				{
+					request: {
+						vertices,
+						grid_size: 1.0,
+					} as ClusteringRequest,
+				},
+			);
+
+			dispatch(setClusteringResults({
+				clusters: clusteringResult.clusters,
+				clusterRectangles: clusteringResult.cluster_rectangles,
+			}));
+
+			notifications.show({
+				title: "Clustering Complete",
+				message: `${clusteringResult.clusters.length} clusters created`,
+				withBorder: true,
+			});
+		} catch (error) {
+			console.error("Clustering failed:", error);
+			notifications.show({
+				title: "Clustering Failed",
+				message: "An error occurred during clustering",
+				color: "red",
+				withBorder: true,
+			});
+		}
+	}
+
+	async function handleSimplify() {
+		try {
+			info(`Simplifying ${clusters.length} clusters...`);
+
+			const simplificationResult = await invoke<SimplificationResult>(
+				"simplify_clusters",
+				{
+					request: {
+						clusters,
+					} as SimplificationRequest2,
+				},
+			);
+
+			dispatch(setSimplificationResults({
+				simplifiedVertices: simplificationResult.simplified_vertices,
+			}));
+
+			notifications.show({
+				title: "Simplification Complete",
+				message: `${simplificationResult.simplified_vertices.length} representative vertices created`,
+				withBorder: true,
+			});
+		} catch (error) {
+			console.error("Simplification failed:", error);
+			notifications.show({
+				title: "Simplification Failed",
+				message: "An error occurred during simplification",
+				color: "red",
+				withBorder: true,
+			});
+		}
+	}
+
+	async function handleClusteringTriangulate() {
+		try {
+			info(`Triangulating ${simplifiedVertices.length} simplified vertices...`);
+
+			const triangulationResult = await invoke<TriangulationResult>(
+				"triangulate",
+				{
+					request: { vertices: simplifiedVertices } as TriangulationRequest,
+				},
+			);
+
+			dispatch(setTriangles(triangulationResult.triangles));
+			dispatch(clearLiftedTriangles());
+
+			notifications.show({
+				title: "Triangulation Complete",
+				message: `${triangulationResult.triangles.length} triangles created from clustered vertices`,
+				withBorder: true,
+			});
+		} catch (error) {
+			console.error("Clustering triangulation failed:", error);
+			notifications.show({
+				title: "Triangulation Failed",
+				message: "An error occurred during triangulation",
+				color: "red",
+				withBorder: true,
+			});
+		}
+	}
 
 	const minNumVertices = dimension === "TWO" ? 3 : 4;
 	const maxNumVertices = 100;
@@ -243,13 +358,24 @@ export default function Sidebar() {
 					{triangulationMethod === TriangulationMethod.VERTEX_CLUSTERING && (
 						<div className="sidebar-section">
 							<h3>Vertex Clustering Workflow</h3>
-							<Button disabled={vertices.length < 3}>
+							<Button
+								onClick={handleCluster}
+								disabled={vertices.length < 3 || isClusteringComplete}
+							>
 								Cluster
 							</Button>
-							<Button disabled style={{ marginTop: "8px" }}>
+							<Button
+								onClick={handleSimplify}
+								disabled={!isClusteringComplete || isSimplificationComplete}
+								style={{ marginTop: "8px" }}
+							>
 								Simplify
 							</Button>
-							<Button disabled style={{ marginTop: "8px" }}>
+							<Button
+								onClick={handleClusteringTriangulate}
+								disabled={!isSimplificationComplete}
+								style={{ marginTop: "8px" }}
+							>
 								Triangulate
 							</Button>
 						</div>
