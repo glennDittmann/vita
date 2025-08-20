@@ -8,6 +8,7 @@ import { useControls } from "leva";
 import { Perf } from "r3f-perf";
 import type { Tetrahedron3 } from "../../src-tauri/bindings/Tetrahedron3";
 import type { Triangle3 } from "../../src-tauri/bindings/Triangle3";
+import ClusterRectangles from "./ClusterRectangles";
 import LiftedTriangle from "./LiftedTriangle";
 import Lights from "./Lights";
 import Tet from "./Tet";
@@ -125,6 +126,7 @@ export default function Experience() {
 				tetrahedra.map((tetrahedron: Tetrahedron3) => (
 					<Tet key={tetrahedron.id} tetrahedron={tetrahedron} />
 				))}
+			<ClusterRectangles />
 		</Canvas>
 	);
 }
