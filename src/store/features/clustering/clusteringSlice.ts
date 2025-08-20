@@ -84,4 +84,20 @@ export const selectIsSimplificationComplete = (state: { clustering: ClusteringSt
 export const selectIsVertexClusteringMethod = (state: { clustering: ClusteringState }) =>
     state.clustering.method === TriangulationMethod.VERTEX_CLUSTERING;
 
+// Additional selectors for cluster rectangle visualization
+export const selectClusterCount = (state: { clustering: ClusteringState }) => state.clustering.clusters.length;
+export const selectClusterRectangleCount = (state: { clustering: ClusteringState }) => state.clustering.clusterRectangles.length;
+export const selectTotalClusteredVertices = (state: { clustering: ClusteringState }) =>
+    state.clustering.clusters.reduce((total, cluster) => total + cluster.vertices.length, 0);
+export const selectClusterRectangleColors = (state: { clustering: ClusteringState }) =>
+    state.clustering.clusterRectangles.map(rect => rect.color);
+export const selectClusterById = (clusterId: string) => (state: { clustering: ClusteringState }) =>
+    state.clustering.clusters.find(cluster => cluster.id === clusterId);
+export const selectClusterRectangleById = (clusterId: string) => (state: { clustering: ClusteringState }) =>
+    state.clustering.clusterRectangles.find(rect => rect.id === clusterId);
+export const selectHasClusterRectangles = (state: { clustering: ClusteringState }) =>
+    state.clustering.clusterRectangles.length > 0;
+export const selectCanVisualizeClusters = (state: { clustering: ClusteringState }) =>
+    state.clustering.isClusteringComplete && state.clustering.clusterRectangles.length > 0;
+
 export default clusteringSlice.reducer;
