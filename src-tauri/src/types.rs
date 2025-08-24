@@ -194,7 +194,6 @@ pub struct ClusterBounds2 {
 pub struct ClusterRectangle {
     pub id: String,
     pub bounds: ClusterBounds2,
-    pub color: String,
     pub vertex_count: usize,
 }
 
