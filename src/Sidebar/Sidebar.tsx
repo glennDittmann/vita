@@ -53,7 +53,9 @@ export default function Sidebar() {
 	const isVertexClustering = useAppSelector(selectIsVertexClusteringMethod);
 	const clusters = useAppSelector(selectClusters);
 	const isClusteringComplete = useAppSelector(selectIsClusteringComplete);
-	const isSimplificationComplete = useAppSelector(selectIsSimplificationComplete);
+	const isSimplificationComplete = useAppSelector(
+		selectIsSimplificationComplete,
+	);
 	const simplifiedVertices = useAppSelector(selectSimplifiedVertices);
 	const [numVertices, setNumVertices] = useState(4);
 
@@ -185,10 +187,12 @@ export default function Sidebar() {
 				},
 			);
 
-			dispatch(setClusteringResults({
-				clusters: clusteringResult.clusters,
-				clusterRectangles: clusteringResult.cluster_rectangles,
-			}));
+			dispatch(
+				setClusteringResults({
+					clusters: clusteringResult.clusters,
+					clusterRectangles: clusteringResult.cluster_rectangles,
+				}),
+			);
 
 			notifications.show({
 				title: "Clustering Complete",
@@ -211,7 +215,7 @@ export default function Sidebar() {
 			info(`Simplifying ${clusters.length} clusters...`);
 
 			const simplificationResult = await invoke<SimplificationResult>(
-				"simplify_clusters",
+				"simplify2d",
 				{
 					request: {
 						clusters,
@@ -219,9 +223,11 @@ export default function Sidebar() {
 				},
 			);
 
-			dispatch(setSimplificationResults({
-				simplifiedVertices: simplificationResult.simplified_vertices,
-			}));
+			dispatch(
+				setSimplificationResults({
+					simplifiedVertices: simplificationResult.simplified_vertices,
+				}),
+			);
 
 			notifications.show({
 				title: "Simplification Complete",
@@ -282,7 +288,10 @@ export default function Sidebar() {
 					onChange={handleMethodChange}
 					data={[
 						{ label: "e-Circles", value: TriangulationMethod.ECIRCLES },
-						{ label: "Vertex Clustering", value: TriangulationMethod.VERTEX_CLUSTERING },
+						{
+							label: "Vertex Clustering",
+							value: TriangulationMethod.VERTEX_CLUSTERING,
+						},
 					]}
 				/>
 			</div>
@@ -337,7 +346,10 @@ export default function Sidebar() {
 							)}
 							<div className="sidebar-section">
 								<h3>Triangulation</h3>
-								<Button onClick={handleTriangulate} disabled={vertices.length < 3}>
+								<Button
+									onClick={handleTriangulate}
+									disabled={vertices.length < 3}
+								>
 									Triangulate
 								</Button>
 							</div>

@@ -2,17 +2,15 @@ mod commands;
 mod logging;
 mod state;
 mod types;
-
-use commands::triangulate;
+use commands::{simplify2d, tetrahedralize, triangulate};
 use std::sync::Mutex;
 use tauri::State;
 use types::{
-    Cluster2, ClusterBounds2, ClusterRectangle, ClusteringRequest, ClusteringResult2,
-    SimplificationRequest2, SimplificationResult, Vertex3,
+    Cluster2, ClusterBounds2, ClusterRectangle, ClusteringRequest, ClusteringResult2, Vertex3,
 };
 use vertex_clustering::VertexClusterer2;
 
-use crate::{commands::tetrahedralize, state::ClustererState};
+use crate::state::ClustererState;
 
 #[tauri::command]
 fn cluster_vertices(
@@ -59,7 +57,6 @@ fn cluster_vertices(
     // Build clusters and cluster rectangles
     let mut clusters = Vec::new();
     let mut cluster_rectangles = Vec::new();
-
     // Iterate through all bins to create clusters
     for x_idx in 0..clusterer.num_bins_x() {
         for y_idx in 0..clusterer.num_bins_y() {
@@ -132,50 +129,6 @@ fn cluster_vertices(
     })
 }
 
-#[tauri::command]
-fn simplify_clusters(
-    request: SimplificationRequest2,
-    state: State<'_, Mutex<ClustererState>>,
-) -> Result<SimplificationResult, String> {
-    log::info!(
-        "Starting cluster simplification with {} clusters",
-        request.clusters.len()
-    );
-
-    if request.clusters.is_empty() {
-        return Err("No clusters provided for simplification".to_string());
-    }
-
-    let state_guard = state.lock().unwrap();
-
-    if state_guard.clusterer.is_none() {
-        return Err("No clusterer available. Please run cluster_vertices first.".to_string());
-    }
-
-    let clusterer = state_guard.clusterer.as_ref().unwrap();
-    let (simplified_vertices_2d, _weights) = clusterer.simplify();
-
-    // Convert back to Vertex3 format
-    let simplified_vertices: Vec<Vertex3> = simplified_vertices_2d
-        .into_iter()
-        .map(|v| Vertex3 {
-            x: v[0],
-            y: 0.0,
-            z: v[1],
-        })
-        .collect();
-
-    log::info!(
-        "Simplification complete: {} clusters -> {} representative vertices",
-        request.clusters.len(),
-        simplified_vertices.len()
-    );
-
-    Ok(SimplificationResult {
-        simplified_vertices,
-    })
-}
-
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -186,7 +139,7 @@ pub fn run() {
             triangulate,
             tetrahedralize,
             cluster_vertices,
-            simplify_clusters
+            simplify2d
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
