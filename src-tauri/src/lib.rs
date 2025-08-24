@@ -1,5 +1,6 @@
 mod commands;
 mod logging;
+mod state;
 mod types;
 
 use commands::triangulate;
@@ -27,13 +28,29 @@ fn cluster_vertices(
     // Convert Vertex3 to [f64; 2] for the clustering algorithm (using x, z coordinates)
     let vertices_2d: Vec<[f64; 2]> = request.vertices.iter().map(|v| [v.x, v.z]).collect();
 
-    // Create the vertex clusterer
-    let clusterer = match VertexClusterer2::new(vertices_2d, None, request.grid_size) {
-        clusterer => clusterer,
-    };
+    // Get or create the clusterer
+    let mut state_guard = state.lock().unwrap();
+
+    // Check if we need to create a new clusterer (first time or settings changed)
+    let needs_new_clusterer =
+        state_guard.clusterer.is_none() || state_guard.grid_size != request.grid_size;
+
+    if needs_new_clusterer {
+        log::info!(
+            "Creating new clusterer with grid size {}",
+            request.grid_size
+        );
+        let clusterer = VertexClusterer2::new(vertices_2d, None, request.grid_size);
+        state_guard.clusterer = Some(clusterer);
+        state_guard.grid_size = request.grid_size;
+    } else {
+        log::info!("Reusing existing clusterer");
+    }
+
+    let clusterer = state_guard.clusterer.as_ref().unwrap();
 
     log::info!(
-        "Created clusterer with {} bins ({} x {})",
+        "Using clusterer with {} bins ({} x {})",
         clusterer.num_bins(),
         clusterer.num_bins_x(),
         clusterer.num_bins_y()
@@ -116,7 +133,10 @@ fn cluster_vertices(
 }
 
 #[tauri::command]
-fn simplify_clusters(request: SimplificationRequest2) -> Result<SimplificationResult, String> {
+fn simplify_clusters(
+    request: SimplificationRequest2,
+    state: State<'_, Mutex<ClustererState>>,
+) -> Result<SimplificationResult, String> {
     log::info!(
         "Starting cluster simplification with {} clusters",
         request.clusters.len()
@@ -126,47 +146,24 @@ fn simplify_clusters(request: SimplificationRequest2) -> Result<SimplificationRe
         return Err("No clusters provided for simplification".to_string());
     }
 
-    let mut simplified_vertices = Vec::new();
+    let state_guard = state.lock().unwrap();
 
-    // For each cluster, select a representative vertex
-    for cluster in &request.clusters {
-        if cluster.vertices.is_empty() {
-            log::warn!("Empty cluster found: {}", cluster.id);
-            continue;
-        }
-
-        // Use the vertex_clustering crate's simplification approach
-        // Convert cluster vertices to 2D format for processing
-        let vertices_2d: Vec<[f64; 2]> = cluster.vertices.iter().map(|v| [v.x, v.z]).collect();
-
-        // Create a clusterer for this specific cluster to get the representative
-        let clusterer = VertexClusterer2::new(vertices_2d.clone(), None, 1.0);
-
-        // Get the representative vertex using the clusterer's simplification method
-        let (simplified_vertices_2d, _weights) = clusterer.simplify();
-
-        let representative = if !simplified_vertices_2d.is_empty() {
-            // Use the first simplified vertex as the representative
-            Vertex3 {
-                x: simplified_vertices_2d[0][0],
-                y: 0.0,
-                z: simplified_vertices_2d[0][1],
-            }
-        } else {
-            // Fallback: use the centroid of the cluster
-            calculate_cluster_centroid(&cluster.vertices)
-        };
-
-        log::debug!(
-            "Cluster {} simplified: {} vertices -> 1 representative at ({}, {}, {})",
-            cluster.id,
-            cluster.vertices.len(),
-            representative.x,
-            representative.y,
-            representative.z
-        );
-        simplified_vertices.push(representative);
+    if state_guard.clusterer.is_none() {
+        return Err("No clusterer available. Please run cluster_vertices first.".to_string());
     }
+
+    let clusterer = state_guard.clusterer.as_ref().unwrap();
+    let (simplified_vertices_2d, _weights) = clusterer.simplify();
+
+    // Convert back to Vertex3 format
+    let simplified_vertices: Vec<Vertex3> = simplified_vertices_2d
+        .into_iter()
+        .map(|v| Vertex3 {
+            x: v[0],
+            y: 0.0,
+            z: v[1],
+        })
+        .collect();
 
     log::info!(
         "Simplification complete: {} clusters -> {} representative vertices",
@@ -316,6 +313,7 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(logging::build_logger())
         .plugin(tauri_plugin_opener::init())
+        .manage(Mutex::new(ClustererState::default()))
         .invoke_handler(tauri::generate_handler![
             triangulate,
             tetrahedralize,
