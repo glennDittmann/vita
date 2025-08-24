@@ -62,7 +62,7 @@ function SingleClusterRectangle({ rectangle }: ClusterRectangleProps) {
 		geometry.setAttribute("position", new Float32BufferAttribute(vertices, 3));
 
 		return geometry;
-	}, [rectangle.bounds]);
+	}, [rectangle]);
 
 	const material = useMemo(() => {
 		return new LineBasicMaterial({
@@ -73,7 +73,7 @@ function SingleClusterRectangle({ rectangle }: ClusterRectangleProps) {
 			depthTest: true,
 			depthWrite: false,
 		});
-	}, [rectangle.color, rectangle.id, isHovered]);
+	}, [isHovered]);
 
 	// Calculate cluster info for potential tooltip/debugging
 	const [centerX, centerZ] = getClusterCenter(rectangle.bounds);
