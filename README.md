@@ -50,3 +50,8 @@ To ensure type safety between `rust` and `typescript` `ts_rs` is used.
 The types that need to be shared between frontend and backend are defined in `src-tauri/src/types.rs`.
 
 Run `cargo test export_bindings`, to generate the `typescript` counterparts to `src-tauri/bindings/`.
+
+## To Do
+- add actual epsilon Setting for Eps Circles method
+- add Vertex Clustering 3D
+- clean up
