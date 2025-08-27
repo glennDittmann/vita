@@ -9,6 +9,7 @@ export enum TriangulationMethod {
 
 interface ClusteringState {
 	method: TriangulationMethod;
+	gridSize: number;
 	clusters: Cluster2[];
 	simplifiedVertices: Vertex3[];
 	isClusteringComplete: boolean;
@@ -17,6 +18,7 @@ interface ClusteringState {
 
 const initialState: ClusteringState = {
 	method: TriangulationMethod.ECIRCLES,
+	gridSize: 1.0,
 	clusters: [],
 	simplifiedVertices: [],
 	isClusteringComplete: false,
@@ -37,6 +39,9 @@ const clusteringSlice = createSlice({
 			state.simplifiedVertices = [];
 			state.isClusteringComplete = false;
 			state.isSimplificationComplete = false;
+		},
+		setGridSize: (state, action: PayloadAction<number>) => {
+			state.gridSize = action.payload;
 		},
 		setClusteringResults: (
 			state,
@@ -72,6 +77,7 @@ const clusteringSlice = createSlice({
 
 export const {
 	setTriangulationMethod,
+	setGridSize,
 	setClusteringResults,
 	setSimplificationResults,
 	clearClusteringState,
@@ -82,6 +88,8 @@ export const {
 export const selectTriangulationMethod = (state: {
 	clustering: ClusteringState;
 }) => state.clustering.method;
+export const selectGridSize = (state: { clustering: ClusteringState }) =>
+	state.clustering.gridSize;
 export const selectClusters = (state: { clustering: ClusteringState }) =>
 	state.clustering.clusters;
 export const selectSimplifiedVertices = (state: {

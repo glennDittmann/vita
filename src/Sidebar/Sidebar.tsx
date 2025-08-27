@@ -19,12 +19,14 @@ import type { Vertex3 } from "../../src-tauri/bindings/Vertex3";
 import {
 	resetClusteringWorkflow,
 	selectClusters,
+	selectGridSize,
 	selectIsClusteringComplete,
 	selectIsSimplificationComplete,
 	selectIsVertexClusteringMethod,
 	selectSimplifiedVertices,
 	selectTriangulationMethod,
 	setClusteringResults,
+	setGridSize,
 	setSimplificationResults,
 	setTriangulationMethod,
 	TriangulationMethod,
@@ -49,6 +51,7 @@ import {
 export default function Sidebar() {
 	const dispatch = useAppDispatch();
 	const dimension = useAppSelector((state) => state.vertexSettings.dimension);
+	const gridSize = useAppSelector(selectGridSize);
 	const vertices = useAppSelector((state) => state.vertexSettings.vertices);
 	const triangles = useAppSelector((state) => state.vertexSettings.triangles);
 	const triangulationMethod = useAppSelector(selectTriangulationMethod);
@@ -183,7 +186,7 @@ export default function Sidebar() {
 			const clusteringResult = await invoke<ClusteringResult2>("cluster2d", {
 				request: {
 					vertices,
-					grid_size: 1.0,
+					grid_size: gridSize,
 				} as ClusteringRequest,
 			});
 
@@ -371,6 +374,23 @@ export default function Sidebar() {
 					{triangulationMethod === TriangulationMethod.VERTEX_CLUSTERING && (
 						<div className="sidebar-section">
 							<h3>Vertex Clustering Workflow</h3>
+							<div className="slider-container">
+								<Slider
+									color="blue"
+									defaultValue={gridSize}
+									onChange={(value) => dispatch(setGridSize(value))}
+									min={0.1}
+									max={10}
+									marks={[
+										{ value: 0.1, label: "0.1" },
+										{ value: 1, label: "1" },
+										{ value: 5, label: "5" },
+										{ value: 10, label: "10" },
+									]}
+									step={0.1}
+								/>
+								<div className="slider-value">Grid Size: {gridSize}</div>
+							</div>
 							<Button
 								onClick={handleCluster}
 								disabled={vertices.length < 3 || isClusteringComplete}
