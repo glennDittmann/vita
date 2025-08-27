@@ -1,4 +1,4 @@
-import type { ClusterRectangle } from "../../src-tauri/bindings/ClusterRectangle";
+import type { Cluster2 } from "../../src-tauri/bindings/Cluster2";
 import type { ClusterBounds2 } from "../../src-tauri/bindings/ClusterBounds2";
 
 /**
@@ -7,8 +7,8 @@ import type { ClusterBounds2 } from "../../src-tauri/bindings/ClusterBounds2";
  * @returns The center point as [x, z] coordinates
  */
 export function getClusterCenter(bounds: ClusterBounds2): [number, number] {
-	const centerX = (bounds.min_x + bounds.max_x) / 2;
-	const centerZ = (bounds.min_z + bounds.max_z) / 2;
+	const centerX = (bounds.bottom_left.x + bounds.top_right.x) / 2;
+	const centerZ = (bounds.bottom_left.z + bounds.top_right.z) / 2;
 	return [centerX, centerZ];
 }
 
@@ -18,8 +18,8 @@ export function getClusterCenter(bounds: ClusterBounds2): [number, number] {
  * @returns The width and height as [width, height]
  */
 export function getClusterDimensions(bounds: ClusterBounds2): [number, number] {
-	const width = bounds.max_x - bounds.min_x;
-	const height = bounds.max_z - bounds.min_z;
+	const width = bounds.top_right.x - bounds.bottom_left.x;
+	const height = bounds.top_right.z - bounds.bottom_left.z;
 	return [width, height];
 }
 
@@ -40,19 +40,19 @@ export const clusterSorters = {
 	/**
 	 * Sort clusters by vertex count (descending)
 	 */
-	byVertexCount: (a: ClusterRectangle, b: ClusterRectangle) =>
-		b.vertex_count - a.vertex_count,
+	byVertexCount: (a: Cluster2, b: Cluster2) =>
+		b.vertices.length - a.vertices.length,
 
 	/**
 	 * Sort clusters by area (descending)
 	 */
-	byArea: (a: ClusterRectangle, b: ClusterRectangle) =>
+	byArea: (a: Cluster2, b: Cluster2) =>
 		getClusterArea(b.bounds) - getClusterArea(a.bounds),
 
 	/**
 	 * Sort clusters by ID (alphabetical)
 	 */
-	byId: (a: ClusterRectangle, b: ClusterRectangle) => a.id.localeCompare(b.id),
+	byId: (a: Cluster2, b: Cluster2) => a.id.localeCompare(b.id),
 };
 
 /**
@@ -62,25 +62,25 @@ export const clusterFilters = {
 	/**
 	 * Filter clusters by minimum vertex count
 	 */
-	byMinVertexCount: (minCount: number) => (cluster: ClusterRectangle) =>
-		cluster.vertex_count >= minCount,
+	byMinVertexCount: (minCount: number) => (cluster: Cluster2) =>
+		cluster.vertices.length >= minCount,
 
 	/**
 	 * Filter clusters by minimum area
 	 */
-	byMinArea: (minArea: number) => (cluster: ClusterRectangle) =>
+	byMinArea: (minArea: number) => (cluster: Cluster2) =>
 		getClusterArea(cluster.bounds) >= minArea,
 
 	/**
 	 * Filter clusters that contain a specific point
 	 */
-	containingPoint: (x: number, z: number) => (cluster: ClusterRectangle) => {
+	containingPoint: (x: number, z: number) => (cluster: Cluster2) => {
 		const { bounds } = cluster;
 		return (
-			x >= bounds.min_x &&
-			x <= bounds.max_x &&
-			z >= bounds.min_z &&
-			z <= bounds.max_z
+			x >= bounds.bottom_left.x &&
+			x <= bounds.top_right.x &&
+			z >= bounds.bottom_left.z &&
+			z <= bounds.top_right.z
 		);
 	},
 };

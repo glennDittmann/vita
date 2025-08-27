@@ -2,20 +2,33 @@ import { Button, SegmentedControl, Slider } from "@mantine/core";
 import { invoke } from "@tauri-apps/api/core";
 import { info } from "@tauri-apps/plugin-log";
 import { useState } from "react";
-import type { TetrahedralizationResult } from "../../src-tauri/bindings/TetrahedralizationResult";
-// BINDINGS
-import type { TriangulationRequest } from "../../src-tauri/bindings/TriangulationRequest";
-import type { TriangulationResult } from "../../src-tauri/bindings/TriangulationResult";
 import type { ClusteringRequest } from "../../src-tauri/bindings/ClusteringRequest";
 import type { ClusteringResult2 } from "../../src-tauri/bindings/ClusteringResult2";
 import type { SimplificationRequest2 } from "../../src-tauri/bindings/SimplificationRequest2";
 import type { SimplificationResult } from "../../src-tauri/bindings/SimplificationResult";
+import type { TetrahedralizationResult } from "../../src-tauri/bindings/TetrahedralizationResult";
+// BINDINGS
+import type { TriangulationRequest } from "../../src-tauri/bindings/TriangulationRequest";
+import type { TriangulationResult } from "../../src-tauri/bindings/TriangulationResult";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import "./Sidebar.css";
 import { notifications } from "@mantine/notifications";
 import type { Dimension } from "../../src-tauri/bindings/Dimension";
 import type { Triangle3 } from "../../src-tauri/bindings/Triangle3";
 import type { Vertex3 } from "../../src-tauri/bindings/Vertex3";
+import {
+	resetClusteringWorkflow,
+	selectClusters,
+	selectIsClusteringComplete,
+	selectIsSimplificationComplete,
+	selectIsVertexClusteringMethod,
+	selectSimplifiedVertices,
+	selectTriangulationMethod,
+	setClusteringResults,
+	setSimplificationResults,
+	setTriangulationMethod,
+	TriangulationMethod,
+} from "../store/features/clustering/clusteringSlice";
 import {
 	clearLiftedTriangles,
 	setLiftedTriangles,
@@ -30,19 +43,6 @@ import {
 	setTriangles,
 	setVertices,
 } from "../store/features/vertexSettings/vertexSettingsSlice";
-import {
-	TriangulationMethod,
-	selectTriangulationMethod,
-	selectIsVertexClusteringMethod,
-	selectClusters,
-	selectIsClusteringComplete,
-	selectIsSimplificationComplete,
-	selectSimplifiedVertices,
-	setTriangulationMethod,
-	setClusteringResults,
-	setSimplificationResults,
-	resetClusteringWorkflow,
-} from "../store/features/clustering/clusteringSlice";
 
 export default function Sidebar() {
 	const dispatch = useAppDispatch();
@@ -177,20 +177,16 @@ export default function Sidebar() {
 		try {
 			info(`Clustering ${vertices.length} vertices...`);
 
-			const clusteringResult = await invoke<ClusteringResult2>(
-				"cluster_vertices",
-				{
-					request: {
-						vertices,
-						grid_size: 1.0,
-					} as ClusteringRequest,
-				},
-			);
+			const clusteringResult = await invoke<ClusteringResult2>("cluster2d", {
+				request: {
+					vertices,
+					grid_size: 1.0,
+				} as ClusteringRequest,
+			});
 
 			dispatch(
 				setClusteringResults({
 					clusters: clusteringResult.clusters,
-					clusterRectangles: clusteringResult.cluster_rectangles,
 				}),
 			);
 

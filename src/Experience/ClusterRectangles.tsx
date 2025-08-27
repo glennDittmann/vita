@@ -1,115 +1,95 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import {
 	BufferGeometry,
 	Color,
 	Float32BufferAttribute,
 	LineBasicMaterial,
 } from "three";
-import { useAppSelector } from "../store/hooks";
 import {
-	selectClusterRectangles,
+	selectClusters,
 	selectIsVertexClusteringMethod,
 } from "../store/features/clustering/clusteringSlice";
-import { getClusterCenter, getClusterDimensions } from "../utils/clusterUtils";
-import type { ClusterRectangle } from "../types/clustering";
+import { useAppSelector } from "../store/hooks";
+import type { Cluster2 } from "../types/clustering";
+
+const Y_EPS = 0.001;
 
 interface ClusterRectangleProps {
-	rectangle: ClusterRectangle;
+	cluster: Cluster2;
 }
 
-function SingleClusterRectangle({ rectangle }: ClusterRectangleProps) {
-	const [isHovered, setIsHovered] = useState(false);
-
+function SingleClusterRectangle({ cluster }: ClusterRectangleProps) {
 	const geometry = useMemo(() => {
-		const { bounds } = rectangle;
-		const { min_x, max_x, min_z, max_z } = bounds;
+		const { bounds } = cluster;
+		const { bottom_left, bottom_right, top_right, top_left } = bounds;
 
 		// Create rectangle vertices for a wireframe border
 		// Rectangle at Y=0 (2D plane) with slight elevation to avoid z-fighting
-		const y = 0.001;
 		const vertices = new Float32Array([
-			// Bottom edge
-			min_x,
-			y,
-			min_z,
-			max_x,
-			y,
-			min_z,
-			// Right edge
-			max_x,
-			y,
-			min_z,
-			max_x,
-			y,
-			max_z,
-			// Top edge
-			max_x,
-			y,
-			max_z,
-			min_x,
-			y,
-			max_z,
-			// Left edge
-			min_x,
-			y,
-			max_z,
-			min_x,
-			y,
-			min_z,
+			// Bottom left -> bottom right
+			bottom_left.x,
+			Y_EPS,
+			bottom_left.z,
+			bottom_right.x,
+			Y_EPS,
+			bottom_right.z,
+			// bottom right -> top right
+			bottom_right.x,
+			Y_EPS,
+			bottom_right.z,
+			top_right.x,
+			Y_EPS,
+			top_right.z,
+			// top right -> top left
+			top_right.x,
+			Y_EPS,
+			top_right.z,
+			top_left.x,
+			Y_EPS,
+			top_left.z,
+			// top left -> bottom left
+			top_left.x,
+			Y_EPS,
+			top_left.z,
+			bottom_left.x,
+			Y_EPS,
+			bottom_left.z,
 		]);
 
 		const geometry = new BufferGeometry();
 		geometry.setAttribute("position", new Float32BufferAttribute(vertices, 3));
 
 		return geometry;
-	}, [rectangle]);
+	}, [cluster]);
 
 	const material = useMemo(() => {
 		return new LineBasicMaterial({
 			color: new Color("green"),
-			linewidth: isHovered ? 3 : 2,
+			linewidth: 2,
 			transparent: true,
-			opacity: isHovered ? 1.0 : 0.8,
+			opacity: 0.8,
 			depthTest: true,
 			depthWrite: false,
 		});
-	}, [isHovered]);
+	}, []);
 
-	// Calculate cluster info for potential tooltip/debugging
-	const [centerX, centerZ] = getClusterCenter(rectangle.bounds);
-	const [width, height] = getClusterDimensions(rectangle.bounds);
-
-	return (
-		<lineSegments
-			geometry={geometry}
-			material={material}
-			onPointerEnter={() => setIsHovered(true)}
-			onPointerLeave={() => setIsHovered(false)}
-			userData={{
-				clusterId: rectangle.id,
-				vertexCount: rectangle.vertex_count,
-				center: [centerX, centerZ],
-				dimensions: [width, height],
-			}}
-		/>
-	);
+	return <lineSegments geometry={geometry} material={material} />;
 }
 
 export default function ClusterRectangles() {
-	const clusterRectangles = useAppSelector(selectClusterRectangles);
+	const clusters = useAppSelector(selectClusters);
 	const isVertexClusteringMethod = useAppSelector(
 		selectIsVertexClusteringMethod,
 	);
 
-	// Only render cluster rectangles when using vertex clustering method
-	if (!isVertexClusteringMethod || clusterRectangles.length === 0) {
+	if (!isVertexClusteringMethod) {
 		return null;
 	}
 
 	return (
 		<group name="cluster-rectangles">
-			{clusterRectangles.map((rectangle) => (
-				<SingleClusterRectangle key={rectangle.id} rectangle={rectangle} />
+			{clusters.map((cluster) => (
+				<SingleClusterRectangle key={cluster.id} cluster={cluster} />
 			))}
 		</group>
 	);

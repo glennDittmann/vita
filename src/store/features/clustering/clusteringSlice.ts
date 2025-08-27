@@ -1,6 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { Cluster2 } from "../../../../src-tauri/bindings/Cluster2";
-import type { ClusterRectangle } from "../../../../src-tauri/bindings/ClusterRectangle";
 import type { Vertex3 } from "../../../../src-tauri/bindings/Vertex3";
 
 export enum TriangulationMethod {
@@ -11,7 +10,6 @@ export enum TriangulationMethod {
 interface ClusteringState {
 	method: TriangulationMethod;
 	clusters: Cluster2[];
-	clusterRectangles: ClusterRectangle[];
 	simplifiedVertices: Vertex3[];
 	isClusteringComplete: boolean;
 	isSimplificationComplete: boolean;
@@ -20,7 +18,6 @@ interface ClusteringState {
 const initialState: ClusteringState = {
 	method: TriangulationMethod.ECIRCLES,
 	clusters: [],
-	clusterRectangles: [],
 	simplifiedVertices: [],
 	isClusteringComplete: false,
 	isSimplificationComplete: false,
@@ -37,7 +34,6 @@ const clusteringSlice = createSlice({
 			state.method = action.payload;
 			// Clear clustering state when switching methods
 			state.clusters = [];
-			state.clusterRectangles = [];
 			state.simplifiedVertices = [];
 			state.isClusteringComplete = false;
 			state.isSimplificationComplete = false;
@@ -46,11 +42,9 @@ const clusteringSlice = createSlice({
 			state,
 			action: PayloadAction<{
 				clusters: Cluster2[];
-				clusterRectangles: ClusterRectangle[];
 			}>,
 		) => {
 			state.clusters = action.payload.clusters;
-			state.clusterRectangles = action.payload.clusterRectangles;
 			state.isClusteringComplete = true;
 			state.isSimplificationComplete = false;
 		},
@@ -63,14 +57,12 @@ const clusteringSlice = createSlice({
 		},
 		clearClusteringState: (state) => {
 			state.clusters = [];
-			state.clusterRectangles = [];
 			state.simplifiedVertices = [];
 			state.isClusteringComplete = false;
 			state.isSimplificationComplete = false;
 		},
 		resetClusteringWorkflow: (state) => {
 			state.clusters = [];
-			state.clusterRectangles = [];
 			state.simplifiedVertices = [];
 			state.isClusteringComplete = false;
 			state.isSimplificationComplete = false;
@@ -92,9 +84,6 @@ export const selectTriangulationMethod = (state: {
 }) => state.clustering.method;
 export const selectClusters = (state: { clustering: ClusteringState }) =>
 	state.clustering.clusters;
-export const selectClusterRectangles = (state: {
-	clustering: ClusteringState;
-}) => state.clustering.clusterRectangles;
 export const selectSimplifiedVertices = (state: {
 	clustering: ClusteringState;
 }) => state.clustering.simplifiedVertices;
@@ -111,9 +100,6 @@ export const selectIsVertexClusteringMethod = (state: {
 // Additional selectors for cluster rectangle visualization
 export const selectClusterCount = (state: { clustering: ClusteringState }) =>
 	state.clustering.clusters.length;
-export const selectClusterRectangleCount = (state: {
-	clustering: ClusteringState;
-}) => state.clustering.clusterRectangles.length;
 export const selectTotalClusteredVertices = (state: {
 	clustering: ClusteringState;
 }) =>
@@ -124,16 +110,8 @@ export const selectTotalClusteredVertices = (state: {
 export const selectClusterById =
 	(clusterId: string) => (state: { clustering: ClusteringState }) =>
 		state.clustering.clusters.find((cluster) => cluster.id === clusterId);
-export const selectClusterRectangleById =
-	(clusterId: string) => (state: { clustering: ClusteringState }) =>
-		state.clustering.clusterRectangles.find((rect) => rect.id === clusterId);
-export const selectHasClusterRectangles = (state: {
-	clustering: ClusteringState;
-}) => state.clustering.clusterRectangles.length > 0;
 export const selectCanVisualizeClusters = (state: {
 	clustering: ClusteringState;
-}) =>
-	state.clustering.isClusteringComplete &&
-	state.clustering.clusterRectangles.length > 0;
+}) => state.clustering.isClusteringComplete;
 
 export default clusteringSlice.reducer;
