@@ -4882,6 +4882,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
 
 [[package]]
+name = "vertex_clustering"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "50fb6d76c0e34ba2b54cc035b42269c3665fa535bc35d5092045dc79be8545a3"
+
+[[package]]
 name = "vita"
 version = "0.1.0"
 dependencies = [
@@ -4896,6 +4902,7 @@ dependencies = [
  "tauri-plugin-opener",
  "ts-rs",
  "uuid",
+ "vertex_clustering",
 ]
 
 [[package]]

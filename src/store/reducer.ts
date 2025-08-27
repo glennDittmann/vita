@@ -1,4 +1,5 @@
 import { combineReducers } from "redux";
+import clusteringReducer from "./features/clustering/clusteringSlice";
 import experienceSettingsReducer from "./features/experienceSettings/experienceSettingsSlice";
 import liftedTrianglesReducer from "./features/liftedTriangles/liftedTrianglesSlice";
 import liftedVerticesReducer from "./features/liftedVertices/liftedVerticesSlice";
@@ -9,6 +10,7 @@ const reducer = combineReducers({
 	liftedTriangles: liftedTrianglesReducer,
 	liftedVertices: liftedVerticesReducer,
 	vertexSettings: vertexSettingsReducer,
+	clustering: clusteringReducer,
 });
 
 export default reducer;

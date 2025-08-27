@@ -157,3 +157,45 @@ impl From<[[f64; 3]; 4]> for Tetrahedron3 {
         }
     }
 }
+// Clustering-related types
+#[derive(Debug, Serialize, Deserialize, TS)]
+#[ts(export)]
+pub struct ClusteringRequest {
+    pub vertices: Vec<Vertex3>,
+    pub grid_size: f64,
+}
+
+#[derive(Debug, Serialize, Deserialize, TS)]
+#[ts(export)]
+pub struct ClusteringResult2 {
+    pub clusters: Vec<Cluster2>,
+}
+
+#[derive(Debug, Serialize, Deserialize, TS)]
+#[ts(export)]
+pub struct Cluster2 {
+    pub id: String,
+    pub bounds: ClusterBounds2,
+    pub vertices: Vec<Vertex3>,
+}
+
+#[derive(Debug, Serialize, Deserialize, TS)]
+#[ts(export)]
+pub struct ClusterBounds2 {
+    pub bottom_left: Vertex3,
+    pub bottom_right: Vertex3,
+    pub top_right: Vertex3,
+    pub top_left: Vertex3,
+}
+
+#[derive(Debug, Serialize, Deserialize, TS)]
+#[ts(export)]
+pub struct SimplificationRequest2 {
+    pub clusters: Vec<Cluster2>,
+}
+
+#[derive(Debug, Serialize, Deserialize, TS)]
+#[ts(export)]
+pub struct SimplificationResult {
+    pub simplified_vertices: Vec<Vertex3>,
+}

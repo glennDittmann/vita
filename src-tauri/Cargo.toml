@@ -28,3 +28,4 @@ ts-rs = "10.1.0"
 tauri-plugin-log = { version = "2", features = ["colored"] }
 log = "0.4.27"
 uuid = { version = "1.17.0", features = ["v4"] }
+vertex_clustering = "0.1.2"
