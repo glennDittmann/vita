@@ -169,32 +169,23 @@ pub struct ClusteringRequest {
 #[ts(export)]
 pub struct ClusteringResult2 {
     pub clusters: Vec<Cluster2>,
-    pub cluster_rectangles: Vec<ClusterRectangle>,
 }
 
 #[derive(Debug, Serialize, Deserialize, TS)]
 #[ts(export)]
 pub struct Cluster2 {
     pub id: String,
-    pub vertices: Vec<Vertex3>,
     pub bounds: ClusterBounds2,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, TS)]
-#[ts(export)]
-pub struct ClusterBounds2 {
-    pub min_x: f64,
-    pub max_x: f64,
-    pub min_z: f64,
-    pub max_z: f64,
+    pub vertices: Vec<Vertex3>,
 }
 
 #[derive(Debug, Serialize, Deserialize, TS)]
 #[ts(export)]
-pub struct ClusterRectangle {
-    pub id: String,
-    pub bounds: ClusterBounds2,
-    pub vertex_count: usize,
+pub struct ClusterBounds2 {
+    pub bottom_left: Vertex3,
+    pub bottom_right: Vertex3,
+    pub top_right: Vertex3,
+    pub top_left: Vertex3,
 }
 
 #[derive(Debug, Serialize, Deserialize, TS)]

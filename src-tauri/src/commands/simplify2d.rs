@@ -24,7 +24,7 @@ pub fn simplify2d(
     let state_guard = state.lock().unwrap();
 
     if state_guard.clusterer.is_none() {
-        return Err("No clusterer available. Please run cluster_vertices first.".to_string());
+        return Err("No clusterer available. Please run cluster2d first.".to_string());
     }
 
     let clusterer = state_guard.clusterer.as_ref().unwrap();

@@ -2,4 +2,4 @@
 import type { ClusterBounds2 } from "./ClusterBounds2";
 import type { Vertex3 } from "./Vertex3";
 
-export type Cluster2 = { id: string, vertices: Array<Vertex3>, bounds: ClusterBounds2, };
+export type Cluster2 = { id: string, bounds: ClusterBounds2, vertices: Array<Vertex3>, };
