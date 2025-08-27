@@ -1,6 +1,8 @@
 import {
+	selectShowVertices,
 	toggleAxis,
 	toggleGrid,
+	toggleVertices,
 } from "../store/features/experienceSettings/experienceSettingsSlice";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import "./Footer.css";
@@ -14,6 +16,7 @@ export default function Footer() {
 	const gridActive = useAppSelector(
 		(state) => state.experienceSettings.gridActive,
 	);
+	const showVertices = useAppSelector(selectShowVertices);
 
 	return (
 		<footer className="footer">
@@ -30,6 +33,13 @@ export default function Footer() {
 						checked={axisActive}
 						onChange={() => dispatch(toggleAxis())}
 						label="Axis"
+					/>
+				</div>
+				<div className="control">
+					<Switch
+						checked={showVertices}
+						onChange={() => dispatch(toggleVertices())}
+						label="Vertices"
 					/>
 				</div>
 			</div>

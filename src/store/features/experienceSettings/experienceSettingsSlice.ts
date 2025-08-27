@@ -1,8 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
+interface ExperienceSettingsState {
+	axisActive: boolean;
+	gridActive: boolean;
+	showVertices: boolean;
+}
+
+const initialState: ExperienceSettingsState = {
 	axisActive: true,
 	gridActive: true,
+	showVertices: true,
 };
 
 const experienceSettingsSlice = createSlice({
@@ -15,8 +22,18 @@ const experienceSettingsSlice = createSlice({
 		toggleGrid: (state) => {
 			state.gridActive = !state.gridActive;
 		},
+		toggleVertices: (state) => {
+			state.showVertices = !state.showVertices;
+		},
 	},
 });
 
-export const { toggleAxis, toggleGrid } = experienceSettingsSlice.actions;
+// Actions
+export const { toggleAxis, toggleGrid, toggleVertices } =
+	experienceSettingsSlice.actions;
 export default experienceSettingsSlice.reducer;
+
+// Selectors
+export const selectShowVertices = (state: {
+	experienceSettings: ExperienceSettingsState;
+}) => state.experienceSettings.showVertices;

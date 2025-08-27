@@ -56,6 +56,7 @@ fn compute_clusters(clusterer: &VertexClusterer2) -> Vec<Cluster2> {
     let min_y = min[1];
 
     // Draw grid bins step by step
+    // todo: we can improve this -> just get the bottom left vertex and draw grid cells by grid size
     for x_idx in 0..clusterer.num_bins_x() {
         for y_idx in 0..clusterer.num_bins_y() {
             let bottom_left = [
@@ -86,10 +87,17 @@ fn compute_clusters(clusterer: &VertexClusterer2) -> Vec<Cluster2> {
                 top_left: Vertex3::from(top_left),
             };
 
+            let vertices = clusterer
+                .get_bin(x_idx, y_idx)
+                .unwrap_or(&Vec::new())
+                .iter()
+                .map(|bin| Vertex3::from(bin.0))
+                .collect();
+
             clusters.push(Cluster2 {
                 id,
                 bounds,
-                vertices: Vec::new(),
+                vertices,
             });
         }
     }

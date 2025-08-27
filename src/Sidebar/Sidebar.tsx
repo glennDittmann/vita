@@ -38,7 +38,9 @@ import {
 	setLiftedVertices,
 } from "../store/features/liftedVertices/liftedVerticesSlice";
 import {
+	resetSimplifiedVertices,
 	setDimension,
+	setSimplifiedVertices,
 	setTetrahedra,
 	setTriangles,
 	setVertices,
@@ -106,6 +108,7 @@ export default function Sidebar() {
 			z: (Math.random() - 0.5) * 5,
 		}));
 		dispatch(setVertices(vertices));
+		dispatch(resetSimplifiedVertices());
 		dispatch(setTriangles([]));
 		dispatch(setTetrahedra([]));
 		dispatch(clearLiftedVertices());
@@ -224,6 +227,8 @@ export default function Sidebar() {
 					simplifiedVertices: simplificationResult.simplified_vertices,
 				}),
 			);
+
+			dispatch(setSimplifiedVertices(simplificationResult.simplified_vertices));
 
 			notifications.show({
 				title: "Simplification Complete",

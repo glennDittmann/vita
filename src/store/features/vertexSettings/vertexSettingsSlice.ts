@@ -9,6 +9,7 @@ interface VertexSettingsState {
 	tetrahedra: Tetrahedron3[];
 	triangles: Triangle3[];
 	vertices: Vertex3[];
+	simplifiedVertices: Vertex3[];
 }
 
 const initialState: VertexSettingsState = {
@@ -16,6 +17,7 @@ const initialState: VertexSettingsState = {
 	tetrahedra: [],
 	triangles: [],
 	vertices: [],
+	simplifiedVertices: [],
 };
 
 const vertexSettingsSlice = createSlice({
@@ -34,9 +36,27 @@ const vertexSettingsSlice = createSlice({
 		setVertices: (state, action: PayloadAction<Vertex3[]>) => {
 			state.vertices = action.payload;
 		},
+		setSimplifiedVertices: (state, action: PayloadAction<Vertex3[]>) => {
+			state.simplifiedVertices = action.payload;
+		},
+		resetSimplifiedVertices: (state) => {
+			state.simplifiedVertices = [];
+		},
 	},
 });
 
-export const { setDimension, setTetrahedra, setTriangles, setVertices } =
-	vertexSettingsSlice.actions;
+// Actions
+export const {
+	setDimension,
+	setTetrahedra,
+	setTriangles,
+	setVertices,
+	setSimplifiedVertices,
+	resetSimplifiedVertices,
+} = vertexSettingsSlice.actions;
 export default vertexSettingsSlice.reducer;
+
+// Selectors
+export const selectSimplifiedVertices = (state: {
+	vertexSettings: VertexSettingsState;
+}) => state.vertexSettings.simplifiedVertices;
