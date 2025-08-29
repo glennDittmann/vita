@@ -14,6 +14,7 @@ pub enum Dimension {
 #[ts(export)]
 pub struct TriangulationRequest {
     pub vertices: Vec<Vertex3>,
+    pub epsilon: f64,
 }
 
 #[derive(Debug, Serialize, Deserialize, TS)]

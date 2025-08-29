@@ -41,7 +41,9 @@ import {
 } from "../store/features/liftedVertices/liftedVerticesSlice";
 import {
 	resetSimplifiedVertices,
+	selectEpsilon,
 	setDimension,
+	setEpsilon,
 	setSimplifiedVertices,
 	setTetrahedra,
 	setTriangles,
@@ -52,6 +54,7 @@ export default function Sidebar() {
 	const dispatch = useAppDispatch();
 	const dimension = useAppSelector((state) => state.vertexSettings.dimension);
 	const gridSize = useAppSelector(selectGridSize);
+	const epsilon = useAppSelector(selectEpsilon);
 	const vertices = useAppSelector((state) => state.vertexSettings.vertices);
 	const triangles = useAppSelector((state) => state.vertexSettings.triangles);
 	const triangulationMethod = useAppSelector(selectTriangulationMethod);
@@ -70,7 +73,7 @@ export default function Sidebar() {
 		const triangulationResult = await invoke<TriangulationResult>(
 			"triangulate",
 			{
-				request: { vertices } as TriangulationRequest,
+				request: { vertices, epsilon } as TriangulationRequest,
 			},
 		);
 
@@ -90,7 +93,7 @@ export default function Sidebar() {
 		const tetrahedralizationResult = await invoke<TetrahedralizationResult>(
 			"tetrahedralize",
 			{
-				request: { vertices } as TriangulationRequest,
+				request: { vertices, epsilon } as TriangulationRequest,
 			},
 		);
 
@@ -256,7 +259,10 @@ export default function Sidebar() {
 			const triangulationResult = await invoke<TriangulationResult>(
 				"triangulate",
 				{
-					request: { vertices: simplifiedVertices } as TriangulationRequest,
+					request: {
+						vertices: simplifiedVertices,
+						epsilon: 0.0,
+					} as TriangulationRequest,
 				},
 			);
 
@@ -286,20 +292,6 @@ export default function Sidebar() {
 	return (
 		<div className="sidebar">
 			<div className="sidebar-section">
-				<h3>Triangulation Method</h3>
-				<SegmentedControl
-					value={triangulationMethod}
-					onChange={handleMethodChange}
-					data={[
-						{ label: "e-Circles", value: TriangulationMethod.ECIRCLES },
-						{
-							label: "Vertex Clustering",
-							value: TriangulationMethod.VERTEX_CLUSTERING,
-						},
-					]}
-				/>
-			</div>
-			<div className="sidebar-section">
 				<SegmentedControl
 					value={dimension}
 					onChange={(value) => {
@@ -316,10 +308,24 @@ export default function Sidebar() {
 					</div>
 				)}
 			</div>
+
+			<div className="sidebar-section">
+				<SegmentedControl
+					value={triangulationMethod}
+					onChange={handleMethodChange}
+					data={[
+						{ label: "e-Circles", value: TriangulationMethod.ECIRCLES },
+						{
+							label: "Vertex Clustering",
+							value: TriangulationMethod.VERTEX_CLUSTERING,
+						},
+					]}
+				/>
+			</div>
+
 			{!is3DDisabledForClustering && (
 				<>
 					<div className="sidebar-section">
-						<h3>Create Vertices</h3>
 						<div className="slider-container">
 							<Slider
 								color="blue"
@@ -342,14 +348,31 @@ export default function Sidebar() {
 						<>
 							{dimension === "TWO" && (
 								<div className="sidebar-section">
-									<h3>Lift Vertices</h3>
 									<Button onClick={handleLift} disabled={vertices.length === 0}>
-										Lift
+										Lift Vertices
 									</Button>
 								</div>
 							)}
 							<div className="sidebar-section">
 								<h3>Triangulation</h3>
+								<div className="slider-container">
+									<Slider
+										color="blue"
+										defaultValue={epsilon}
+										onChange={(value) => dispatch(setEpsilon(value))}
+										min={0.0}
+										max={1.0}
+										marks={[
+											{ value: 0.0, label: "0.0" },
+											{ value: 0.5, label: "0.5" },
+											{ value: 1.0, label: "1.0" },
+										]}
+										step={0.01}
+									/>
+									<div className="slider-value">
+										Epsilon: {epsilon.toFixed(2)}
+									</div>
+								</div>
 								<Button
 									onClick={handleTriangulate}
 									disabled={vertices.length < 3}
@@ -359,7 +382,6 @@ export default function Sidebar() {
 							</div>
 							{dimension === "TWO" && (
 								<div className="sidebar-section">
-									<h3>Lift Triangles</h3>
 									<Button
 										onClick={handleLiftTriangles}
 										disabled={triangles.length === 0}

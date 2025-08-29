@@ -4,7 +4,7 @@ use crate::types::{TetrahedralizationResult, Tetrahedron3, TriangulationRequest,
 
 #[tauri::command]
 pub fn tetrahedralize(request: TriangulationRequest) -> TetrahedralizationResult {
-    let mut t = Tetrahedralization::new(None);
+    let mut t = Tetrahedralization::new(Some(request.epsilon));
 
     let vertices = request
         .vertices

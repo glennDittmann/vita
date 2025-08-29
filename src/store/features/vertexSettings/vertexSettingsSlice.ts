@@ -10,6 +10,7 @@ interface VertexSettingsState {
 	triangles: Triangle3[];
 	vertices: Vertex3[];
 	simplifiedVertices: Vertex3[];
+	epsilon: number;
 }
 
 const initialState: VertexSettingsState = {
@@ -18,6 +19,7 @@ const initialState: VertexSettingsState = {
 	triangles: [],
 	vertices: [],
 	simplifiedVertices: [],
+	epsilon: 0.0,
 };
 
 const vertexSettingsSlice = createSlice({
@@ -42,6 +44,9 @@ const vertexSettingsSlice = createSlice({
 		resetSimplifiedVertices: (state) => {
 			state.simplifiedVertices = [];
 		},
+		setEpsilon: (state, action: PayloadAction<number>) => {
+			state.epsilon = action.payload;
+		},
 	},
 });
 
@@ -53,10 +58,13 @@ export const {
 	setVertices,
 	setSimplifiedVertices,
 	resetSimplifiedVertices,
+	setEpsilon,
 } = vertexSettingsSlice.actions;
 export default vertexSettingsSlice.reducer;
 
 // Selectors
+export const selectEpsilon = (state: { vertexSettings: VertexSettingsState }) =>
+	state.vertexSettings.epsilon;
 export const selectSimplifiedVertices = (state: {
 	vertexSettings: VertexSettingsState;
 }) => state.vertexSettings.simplifiedVertices;

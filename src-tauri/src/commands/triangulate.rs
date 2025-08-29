@@ -4,7 +4,7 @@ use crate::types::{Triangle3, TriangulationRequest, TriangulationResult, Vertex3
 
 #[tauri::command]
 pub fn triangulate(request: TriangulationRequest) -> TriangulationResult {
-    let mut t = Triangulation::new(None);
+    let mut t = Triangulation::new(Some(request.epsilon));
 
     let vertices = request
         .vertices
