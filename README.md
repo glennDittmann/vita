@@ -2,6 +2,8 @@
 
 A modern web application built with Three.js and React that visualizes 3D point clouds. The project uses Vite for fast development and Tauri for native desktop capabilities.
 
+Note: this lives in my personal website now (rust libraries providing WASM bindings and the react code code simply be moved)
+
 ## Features
 
 - Interactive 3D point cloud visualization
